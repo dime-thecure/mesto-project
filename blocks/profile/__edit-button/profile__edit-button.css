@@ -8,6 +8,7 @@
   border: 1px solid #FFFFFF;
   margin: 0;
   cursor: pointer;
+  padding: 0;
 }
 
 @media screen and (max-width: 320px) {
