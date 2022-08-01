@@ -5,14 +5,14 @@
   height: 50px;
   border: 2px solid #FFFFFF;
   border-radius: 2px;
-  background: url(../../../images/Vector-add.png);
+  background: url(../../../images/vector-add.svg);
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
   padding: 0;
 }
 
-@media screen and (max-width: 320px) {
+@media screen and (max-width: 900px) {
   .profile__add-button {
     margin-top: 10px;
     max-width: 282px;
