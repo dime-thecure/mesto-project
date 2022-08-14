@@ -1,4 +1,8 @@
 .elements__photo {
   border-radius: 10px 10px 0px 0px;
   grid-column: 1/3;
+  grid-row: 1/2;
+  width: 100%;
+  height: 282px;
+  cursor: pointer;
 }

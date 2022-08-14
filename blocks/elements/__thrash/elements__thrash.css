@@ -1,0 +1,17 @@
+.elements__thrash {
+  grid-column: 2/3;
+  grid-row: 1/2;
+  justify-self: end;
+  background: url(../../../images/thrash.svg);
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 19.3px;
+  border: none;
+  margin: 20px 20px 0 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.elements__thrash:hover {
+  opacity: .6;
+}

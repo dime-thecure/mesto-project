@@ -26,41 +26,6 @@
     </section>
 
     <section class="elements">
-      <article class="elements__element">
-        <img class="elements__photo" alt="Фото Карачаевск" src="images/Karachaevsk.jpg">
-        <h2 class="elements__title">Карачаевск</h2>
-        <button class="elements__like" type="button" aria-label="Поставить лайк"></button>
-      </article>
-
-      <article class="elements__element">
-        <img class="elements__photo" alt="Фото гора Эльбрус" src="images/elbrus.jpg">
-        <h2 class="elements__title">Гора Эльбрус</h2>
-        <button class="elements__like" type="button" aria-label="Поставить лайк"></button>
-      </article>
-
-      <article class="elements__element">
-        <img class="elements__photo" alt="Фото Домбай" src="images/dombay.jpg">
-        <h2 class="elements__title">Домбай</h2>
-        <button class="elements__like" type="button" aria-label="Поставить лайк"></button>
-      </article>
-
-      <article class="elements__element">
-        <img class="elements__photo" alt="Фото гора Эльбрус" src="images/elbrus.jpg">
-        <h2 class="elements__title">Гора Эльбрус</h2>
-        <button class="elements__like" type="button" aria-label="Поставить лайк"></button>
-      </article>
-
-      <article class="elements__element">
-        <img class="elements__photo" alt="Фото Домбай" src="images/dombay.jpg">
-        <h2 class="elements__title">Домбай</h2>
-        <button class="elements__like" type="button" aria-label="Поставить лайк"></button>
-      </article>
-
-      <article class="elements__element">
-        <img class="elements__photo" alt="Фото Карачаево-Черкессия" src="images/Karachaevsk.jpg">
-        <h2 class="elements__title">Карачаево-Черкессия</h2>
-        <button class="elements__like" type="button" aria-label="Поставить лайк"></button>
-      </article>
     </section>
   </main>
 
@@ -68,11 +33,11 @@
     <a class="footer__author">&copy; 2022 Mesto Russia</a>
   </footer>
 
-  <div class="popup">
+  <div class="popup" id="profile">
     <div class="popup__container">
       <button class="popup__close-button" type="button" aria-label="Закрыть форму">
       </button>
-      <form name="form-profile">
+      <form class="form-profile" name="form-profile">
         <fieldset class="popup__fieldset">
           <legend class="popup__header">Редактировать профиль</legend>
           <input class="popup__input" type="text" name="name" id="name" placeholder="Имя">
@@ -83,5 +48,39 @@
     </div>
   </div>
 
+  <div class="popup" id="newItem">
+    <div class="popup__container">
+      <button class="popup__close-button" type="button" aria-label="Закрыть форму">
+      </button>
+      <form class="form-profile" name="form-profile">
+        <fieldset class="popup__fieldset">
+          <legend class="popup__header">Новое место</legend>
+          <input class="popup__input" type="text" name="name" id="name" placeholder="Название">
+          <input class="popup__input" type="text" name="about" id="about" placeholder="Ссылка на картинку">
+          <button class="popup__button" type="submit" aria-label="Сохранить форму">Создать</button>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+
+  <div class="popup-image" id="popupImage">
+    <figure class="popup-image__box">
+      <button class="popup-image__close-button" type="button" aria-label="Закрыть просмотр картинки"></button>
+      <img class="popup-image__image" src="" alt="">
+      <figcaption class="popup-image__title"></figcaption>
+    </figure>
+
+  </div>
+
+  <template id="element">
+    <article class="elements__element">
+      <img class="elements__photo">
+      <button class="elements__thrash" type="button" aria-label="Удалить место"></button>
+      <h2 class="elements__title"></h2>
+      <button class="elements__like" type="button" aria-label="Поставить лайк"></button>
+    </article>
+  </template>
+
+  <script src="script.js"></script>
 </body>
 </html>
