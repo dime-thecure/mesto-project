@@ -37,11 +37,11 @@
     <div class="popup__container">
       <button class="popup__close-button" type="button" aria-label="Закрыть форму">
       </button>
-      <form class="form-profile" name="form-profile">
+      <form id="form-profile">
         <fieldset class="popup__fieldset">
           <legend class="popup__header">Редактировать профиль</legend>
-          <input class="popup__input" type="text" name="name" id="name" placeholder="Имя">
-          <input class="popup__input" type="text" name="about" id="about" placeholder="О себе">
+          <input class="popup__input" type="text" name="name" id="profile-name" placeholder="Имя">
+          <input class="popup__input" type="text" name="about" id="profile-about" placeholder="О себе">
           <button class="popup__button" type="submit" aria-label="Сохранить форму">Сохранить</button>
         </fieldset>
       </form>
@@ -52,35 +52,36 @@
     <div class="popup__container">
       <button class="popup__close-button" type="button" aria-label="Закрыть форму">
       </button>
-      <form class="form-profile" name="form-profile">
+      <form id="form-newItem">
         <fieldset class="popup__fieldset">
           <legend class="popup__header">Новое место</legend>
-          <input class="popup__input" type="text" name="name" id="name" placeholder="Название">
-          <input class="popup__input" type="text" name="about" id="about" placeholder="Ссылка на картинку">
+          <input class="popup__input" type="text" name="name" id="newItem-name" placeholder="Название">
+          <input class="popup__input" type="text" name="about" id="newItem-about" placeholder="Ссылка на картинку">
           <button class="popup__button" type="submit" aria-label="Сохранить форму">Создать</button>
         </fieldset>
       </form>
     </div>
   </div>
 
-  <div class="popup-image" id="popupImage">
-    <figure class="popup-image__box">
-      <button class="popup-image__close-button" type="button" aria-label="Закрыть просмотр картинки"></button>
-      <img class="popup-image__image" src="" alt="">
-      <figcaption class="popup-image__title"></figcaption>
+  <div class="popup popup_popup-image" id="popupImage">
+    <figure class="popup__box">
+      <button class="popup__close-button" type="button" aria-label="Закрыть просмотр картинки"></button>
+      <img class="popup__image" src="https://via.placeholder.com/100.jpg" alt="Заглушка с сайта placeholder.com">
+      <figcaption class="popup__title"></figcaption>
     </figure>
 
   </div>
 
   <template id="element">
-    <article class="elements__element">
+    <div class="elements__element">
       <img class="elements__photo">
       <button class="elements__thrash" type="button" aria-label="Удалить место"></button>
       <h2 class="elements__title"></h2>
       <button class="elements__like" type="button" aria-label="Поставить лайк"></button>
-    </article>
+    </div>
   </template>
 
-  <script src="script.js"></script>
+  <script src="scripts/cards.js"></script>
+  <script src="scripts/index.js"></script>
 </body>
 </html>
