@@ -14,7 +14,7 @@
   padding: 0;
 }
 
-.popup__button:hover {
+.popup__button:hover:enabled {
   opacity: .8;
 }
 

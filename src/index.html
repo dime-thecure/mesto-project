@@ -5,18 +5,17 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="pages/index.css">
   <title>Mesto Russia</title>
 </head>
 
 <body class="page">
   <header class="header">
-    <img class="header__logo" alt="Логотип Mesto Russia" src="images/logo_desktop.svg">
+    <img class="header__logo" alt="Логотип Mesto Russia" src="<%=require('./images/logo_desktop.svg')%>">
   </header>
 
   <main>
     <section class="profile">
-      <img class="profile__avatar" alt="Фото профиля (аватар)" src="images/profile-jac.jpg">
+      <img class="profile__avatar" alt="Фото профиля (аватар)" src="<%=require('./images/profile-jac.jpg')%>">
       <div class="profile__info">
         <h1 class="profile__title">Жак-Ив Кусто</h1>
         <button class="profile__edit-button" type="button" aria-label="Редактировать профиль"></button>
@@ -37,12 +36,18 @@
     <div class="popup__container">
       <button class="popup__close-button" type="button" aria-label="Закрыть форму">
       </button>
-      <form id="form-profile">
+      <form class="form" id="form-profile">
         <fieldset class="popup__fieldset">
           <legend class="popup__header">Редактировать профиль</legend>
-          <input class="popup__input" type="text" name="name" id="profile-name" placeholder="Имя">
-          <input class="popup__input" type="text" name="about" id="profile-about" placeholder="О себе">
-          <button class="popup__button" type="submit" aria-label="Сохранить форму">Сохранить</button>
+          <div class="popup__input-block">
+            <input class="popup__input" type="text" name="name" id="profile-name" placeholder="Имя" minlength="2" maxlength="40" pattern="^[a-zA-Zа-яА-Я -]+$" data-error-message="Разрешены только латинские буквы, кириллические буквы, знаки дефиса и пробелы" required>
+            <span class="popup__input-error profile-name-error">Вы пропустили это поле.</span>
+          </div>
+          <div class="popup__input-block">
+            <input class="popup__input" type="text" name="about" id="profile-about" placeholder="О себе" minlength="2" maxlength="200" pattern="^[a-zA-Zа-яА-Я -]+$" data-error-message="Разрешены только латинские буквы, кириллические буквы, знаки дефиса и пробелы" required>
+            <span class="popup__input-error profile-about-error">Вы пропустили это поле.</span>
+          </div>
+            <button class="popup__button" type="submit" aria-label="Сохранить форму">Сохранить</button>
         </fieldset>
       </form>
     </div>
@@ -52,11 +57,17 @@
     <div class="popup__container">
       <button class="popup__close-button" type="button" aria-label="Закрыть форму">
       </button>
-      <form id="form-newItem">
+      <form class="form" id="form-newItem">
         <fieldset class="popup__fieldset">
           <legend class="popup__header">Новое место</legend>
-          <input class="popup__input" type="text" name="name" id="newItem-name" placeholder="Название">
-          <input class="popup__input" type="text" name="about" id="newItem-about" placeholder="Ссылка на картинку">
+          <div class="popup__input-block">
+            <input class="popup__input" type="text" name="name" id="newItem-name" placeholder="Название"  minlength="2" maxlength="30" pattern="^[a-zA-Zа-яА-Я -]+$" data-error-message="Разрешены только латинские буквы, кириллические буквы, знаки дефиса и пробелы" required>
+            <span class="popup__input-error newItem-name-error">Вы пропустили это поле.</span>
+          </div>
+          <div class="popup__input-block">
+            <input class="popup__input" type="url" name="about" id="newItem-about" placeholder="Ссылка на картинку" required>
+            <span class="popup__input-error newItem-about-error">Введите адрес сайта.</span>
+          </div>
           <button class="popup__button" type="submit" aria-label="Сохранить форму">Создать</button>
         </fieldset>
       </form>
@@ -81,7 +92,5 @@
     </div>
   </template>
 
-  <script src="scripts/cards.js"></script>
-  <script src="scripts/index.js"></script>
 </body>
 </html>
