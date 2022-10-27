@@ -36,19 +36,20 @@ const popupImageTitle = popupImage.querySelector('.popup__title');
 //добавление нового элемента по двум параметрам
 function addNewElement(elLink, elName) {
   const newEl = tempItem.cloneNode(true);
-  newEl.querySelector('.elements__photo').src = elLink;
-  newEl.querySelector('.elements__photo').alt = 'Фото ' + elName;
+  const newElPhoto = newEl.querySelector('.elements__photo');
+  newElPhoto.src = elLink;
+  newElPhoto.alt = 'Фото ' + elName;
   newEl.querySelector('.elements__title').textContent = elName;
   newEl.querySelector('.elements__like').addEventListener('click', function (evt) {
     evt.target.classList.toggle('elements__like_active');
   });
   newEl.querySelector('.elements__thrash').addEventListener('click', function (evt) {
-    evt.target.parentNode.remove();
+    evt.target.closest('.elements__element').remove();
   });
-  newEl.querySelector('.elements__photo').addEventListener('click', function (evt) {
-    popupImagePicture.src = evt.target.src;
-    popupImageTitle.textContent = evt.target.parentNode.querySelector('.elements__title').textContent;
-    popupImagePicture.alt = 'Фото ' + popupImageTitle.textContent;
+  newElPhoto.addEventListener('click', function (evt) {
+    popupImagePicture.src = elLink;
+    popupImageTitle.textContent = elName;
+    popupImagePicture.alt = 'Фото ' + elName;
     openPopup(popupImage);
   });
   return newEl;
@@ -56,10 +57,9 @@ function addNewElement(elLink, elName) {
 
 //заполняем карточки по константам
 function initCards () {
-  for (let i = 0; i < initialCards.length; i++){
-    const newElement = addNewElement(initialCards[i].link, initialCards[i].name);
-    elementsContainer.append(newElement);
-  }
+  initialCards.forEach((newElement) => {
+    elementsContainer.append(addNewElement(newElement.link, newElement.name));
+  });
 }
 
 export {initCards,addNewElement};
