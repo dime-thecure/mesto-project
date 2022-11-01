@@ -1,9 +1,12 @@
 import { enableValidation } from './validate.js';
-import { initCards } from './card.js';
-import { setDocumentEventListeners } from './modal.js'
+import { getInitialCards } from "./api.js";
+import { setDocumentEventListeners } from './modal.js';
+import { getUserInfo } from './api.js';
 
+//Загружаем профиль
+getUserInfo();
 //Создаем начальные карточки
-initCards();
+getInitialCards();
 //Ставим слушатели на все элементы документа
 setDocumentEventListeners();
 //Запускаем валидацию

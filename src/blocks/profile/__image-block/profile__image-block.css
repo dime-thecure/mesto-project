@@ -1,0 +1,17 @@
+.profile__image-block {
+  position: relative;
+}
+
+.profile__image-block:hover::after {
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.8);
+  background-image: url(../../../images/editAvatar.svg);
+  background-position: center center;
+  background-repeat: no-repeat;
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}

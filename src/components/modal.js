@@ -1,4 +1,5 @@
-import { addNewElement } from "./card";
+import { addNewElement } from "./card.js";
+import { setUserInfo, addNewCardToServer, changeAvatarToServer } from "./api.js";
 
 const profilePopup = document.querySelector('#profile');
 const profilePopupName = profilePopup.querySelector('#profile-name');
@@ -9,13 +10,14 @@ const newItemPopup = document.querySelector('#newItem');
 const newItemPopupInputAbout = newItemPopup.querySelector('#newItem-about');
 const newItemPopupInputName = newItemPopup.querySelector('#newItem-name');
 const popupImage = document.querySelector('#popupImage');
+const changeAvatarPopup = document.querySelector('#changeAvatar');
 
-//дублирование
 const elementsContainer = document.querySelector('.elements');
 
 //нажатие на Сохранить формы профиля
 function handleProfilePopupSubmitButton(evt) {
   evt.preventDefault();
+  setUserInfo(profilePopupName.value, profilePopupAbout.value);
   profileTitle.textContent = profilePopupName.value;
   profileSubTitle.textContent = profilePopupAbout.value;
   closePopup(profilePopup);
@@ -24,9 +26,16 @@ function handleProfilePopupSubmitButton(evt) {
 //нажатие на Создать на форме нового места
 function handleNewItemPopupSubmitButton(evt) {
   evt.preventDefault();
-  const newEl = addNewElement(newItemPopupInputAbout.value, newItemPopupInputName.value);
-  elementsContainer.prepend(newEl);
+  addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value);
   closePopup(newItemPopup);
+  evt.target.reset();
+}
+
+//нажатие на Сохранить на форме аватара
+function handleAvatarPopupSubmitButton(evt) {
+  evt.preventDefault();
+  changeAvatarToServer(changeAvatarPopup.querySelector('#changeAvatar-about').value);
+  closePopup(changeAvatarPopup);
   evt.target.reset();
 }
 
@@ -46,6 +55,8 @@ function handleOverlay(evt) {
 
 //открытие попап, установка слушателя на Esc и клик
 function openPopup(popup) {
+  const popupButton = popup.querySelector('.popup__button');
+  if (popupButton) popupButton.textContent = popupButton.dataset.text;
   popup.classList.add('popup_opened');
   document.addEventListener('keydown', handleEscape);
   popup.addEventListener('mousedown', handleOverlay);
@@ -53,6 +64,8 @@ function openPopup(popup) {
 
 //закрытие попап, удаление слушателя на Esc и клик
 function closePopup(popup) {
+  const popupButton = popup.querySelector('.popup__button');
+  if (popupButton) popupButton.textContent = 'Сохранение...';
   popup.classList.remove('popup_opened');
   document.removeEventListener('keydown', handleEscape);
   popup.removeEventListener('mousedown', handleOverlay);
@@ -84,6 +97,19 @@ function setDocumentEventListeners() {
   newItemPopup.querySelector('.popup__close-button').addEventListener('click', function () {
     closePopup(newItemPopup);
   });
+
+  //нажатие на кнопку редактирования аватара
+  document.querySelector('.profile__image-block').addEventListener('click', function () {
+    openPopup(changeAvatarPopup);
+  });
+
+  //нажатие на крестик закрытия формы редактирования аватара
+  changeAvatarPopup.querySelector('.popup__close-button').addEventListener('click', function () {
+    closePopup(changeAvatarPopup);
+  });
+
+  //нажатие на Сохранить на форме редактирования аватара
+  changeAvatarPopup.querySelector('#form-changeAvatar').addEventListener('submit', handleAvatarPopupSubmitButton);
 
   //нажатие на Создать на форме нового места
   newItemPopup.querySelector('#form-newItem').addEventListener('submit', handleNewItemPopupSubmitButton);

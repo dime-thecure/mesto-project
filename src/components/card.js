@@ -1,51 +1,28 @@
 import { openPopup } from "./modal";
+import { deleteCardFromServer, setLike } from "./api.js";
 
-const initialCards = [
-  {
-    name: 'Архыз',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg'
-  },
-  {
-    name: 'Челябинская область',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg'
-  },
-  {
-    name: 'Иваново',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg'
-  },
-  {
-    name: 'Камчатка',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg'
-  },
-  {
-    name: 'Холмогорский район',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg'
-  },
-  {
-    name: 'Байкал',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg'
-  }
-];
-
-const elementsContainer = document.querySelector('.elements');
 const tempItem = document.querySelector('#element').content.querySelector('.elements__element');
-
 const popupImagePicture = popupImage.querySelector('.popup__image');
 const popupImageTitle = popupImage.querySelector('.popup__title');
 
-//добавление нового элемента по двум параметрам
-function addNewElement(elLink, elName) {
+//добавление нового элемента по параметрам
+function addNewElement(elLink, elName, elLikes, elMyCard, elImageId) {
   const newEl = tempItem.cloneNode(true);
   const newElPhoto = newEl.querySelector('.elements__photo');
+  const newElLike = newEl.querySelector('.elements__like');
   newElPhoto.src = elLink;
   newElPhoto.alt = 'Фото ' + elName;
   newEl.querySelector('.elements__title').textContent = elName;
-  newEl.querySelector('.elements__like').addEventListener('click', function (evt) {
-    evt.target.classList.toggle('elements__like_active');
-  });
-  newEl.querySelector('.elements__thrash').addEventListener('click', function (evt) {
-    evt.target.closest('.elements__element').remove();
-  });
+  newElLike.dataset.count = elLikes;
+  newElLike.dataset.imageid = elImageId;
+  newElLike.addEventListener('click', setLike);
+  const elThrash = newEl.querySelector('.elements__thrash');
+  if (elMyCard) {
+    elThrash.dataset.id = elMyCard;
+    elThrash.addEventListener('click', deleteCardFromServer);
+  } else {
+    elThrash.remove();
+  }
   newElPhoto.addEventListener('click', function (evt) {
     popupImagePicture.src = elLink;
     popupImageTitle.textContent = elName;
@@ -55,11 +32,4 @@ function addNewElement(elLink, elName) {
   return newEl;
 }
 
-//заполняем карточки по константам
-function initCards () {
-  initialCards.forEach((newElement) => {
-    elementsContainer.append(addNewElement(newElement.link, newElement.name));
-  });
-}
-
-export {initCards,addNewElement};
+export { addNewElement };

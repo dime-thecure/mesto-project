@@ -15,7 +15,9 @@
 
   <main>
     <section class="profile">
-      <img class="profile__avatar" alt="Фото профиля (аватар)" src="<%=require('./images/profile-jac.jpg')%>">
+      <div class="profile__image-block">
+        <img class="profile__avatar" alt="Фото профиля (аватар)" src="<%=require('./images/profile-jac.jpg')%>">
+      </div>
       <div class="profile__info">
         <h1 class="profile__title">Жак-Ив Кусто</h1>
         <button class="profile__edit-button" type="button" aria-label="Редактировать профиль"></button>
@@ -47,7 +49,7 @@
             <input class="popup__input" type="text" name="about" id="profile-about" placeholder="О себе" minlength="2" maxlength="200" pattern="^[a-zA-Zа-яА-Я -]+$" data-error-message="Разрешены только латинские буквы, кириллические буквы, знаки дефиса и пробелы" required>
             <span class="popup__input-error profile-about-error">Вы пропустили это поле.</span>
           </div>
-            <button class="popup__button" type="submit" aria-label="Сохранить форму">Сохранить</button>
+            <button class="popup__button" data-text="Сохранить" type="submit" aria-label="Сохранить форму">Сохранить</button>
         </fieldset>
       </form>
     </div>
@@ -68,7 +70,7 @@
             <input class="popup__input" type="url" name="about" id="newItem-about" placeholder="Ссылка на картинку" required>
             <span class="popup__input-error newItem-about-error">Введите адрес сайта.</span>
           </div>
-          <button class="popup__button popup__button_disabled" type="submit" aria-label="Сохранить форму" disabled>Создать</button>
+          <button class="popup__button popup__button_disabled" data-text="Создать" type="submit" aria-label="Сохранить форму" disabled>Создать</button>
         </fieldset>
       </form>
     </div>
@@ -80,7 +82,23 @@
       <img class="popup__image" src="https://via.placeholder.com/100.jpg" alt="Заглушка с сайта placeholder.com">
       <figcaption class="popup__title"></figcaption>
     </figure>
+  </div>
 
+  <div class="popup" id="changeAvatar">
+    <div class="popup__container">
+      <button class="popup__close-button" type="button" aria-label="Закрыть форму">
+      </button>
+      <form class="form" id="form-changeAvatar">
+        <fieldset class="popup__fieldset">
+          <legend class="popup__header">Обновить аватар</legend>
+          <div class="popup__input-block">
+            <input class="popup__input" type="url" name="about" id="changeAvatar-about" placeholder="Ссылка на картинку" required>
+            <span class="popup__input-error changeAvatar-about-error">Введите адрес сайта.</span>
+          </div>
+          <button class="popup__button popup__button_disabled" data-text="Сохранить" type="submit" aria-label="Сохранить аватар" disabled>Сохранить</button>
+        </fieldset>
+      </form>
+    </div>
   </div>
 
   <template id="element">
@@ -88,7 +106,7 @@
       <img class="elements__photo">
       <button class="elements__thrash" type="button" aria-label="Удалить место"></button>
       <h2 class="elements__title"></h2>
-      <button class="elements__like" type="button" aria-label="Поставить лайк"></button>
+      <button class="elements__like" type="button" aria-label="Поставить лайк" data-count="0"></button>
     </div>
   </template>
 

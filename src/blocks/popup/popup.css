@@ -10,5 +10,5 @@
   background: rgba(0, 0, 0, .5);
   opacity: 0;
   visibility: hidden;
-  transition: visibility 0.5s, opacity 0.5s ease;
+  transition: visibility 1s, opacity 1s ease;
 }
