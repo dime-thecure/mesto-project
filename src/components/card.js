@@ -1,52 +1,18 @@
 import { openPopup } from "./modal";
-import { deleteCardFromServer, setLikeToServer, getUserInfoFromServer, getInitialCardsFromServer } from "./api.js";
+import { deleteCardFromServer, setLikeToServer } from "./api.js";
 
 const tempItem = document.querySelector('#element').content.querySelector('.elements__element');
 const popupImagePicture = popupImage.querySelector('.popup__image');
 const popupImageTitle = popupImage.querySelector('.popup__title');
-let myId = '';
-
-function setUserInfo() {
-  getUserInfoFromServer()
-  .then((data) => {
-    const profileTitle = document.querySelector('.profile__title');
-    const profileSubTitle = document.querySelector('.profile__subtitle');
-    const profileAvatar = document.querySelector('.profile__avatar');
-    profileTitle.textContent = data.name;
-    profileSubTitle.textContent = data.about;
-    profileAvatar.src = data.avatar;
-    myId = data._id;
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-}
-
-function setInitialCards() {
-  getInitialCardsFromServer()
-  .then((data) => {
-    const elementsContainer = document.querySelector('.elements');
-    console.log(data);
-    let cardId = '';
-    data.forEach((newElement) => {
-      if (newElement.owner._id === myId)
-        cardId = newElement._id;
-      else cardId = '';
-      const newEl = addNewElement(newElement.link, newElement.name, newElement.likes.length, cardId, newElement._id);
-      const myLike = newElement.likes.some(element => element._id === myId);
-      if (myLike) newEl.querySelector('.elements__like').classList.toggle('elements__like_active');
-      elementsContainer.append(newEl);
-    });
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-}
 
 function deleteCard(evt) {
+  evt.target.closest('.elements__element').remove();
+}
+
+function handleDeleteCardButton(evt) {
   deleteCardFromServer(evt)
   .then((data) => {
-    evt.target.closest('.elements__element').remove();
+    deleteCard(evt);
     console.log(data);
   })
   .catch((err) => {
@@ -54,11 +20,15 @@ function deleteCard(evt) {
   });
 }
 
-function setLike(evt) {
+function setLike(evt, likesCount) {
+  evt.target.dataset.count = likesCount;
+  evt.target.classList.toggle('elements__like_active');
+}
+
+function handleSetLikeButton(evt) {
   setLikeToServer(evt)
   .then((data) => {
-    evt.target.dataset.count = data.likes.length;
-    evt.target.classList.toggle('elements__like_active');
+    setLike(evt, data.likes.length);
     console.log(data);
   })
   .catch((err) => {
@@ -67,7 +37,7 @@ function setLike(evt) {
 }
 
 //добавление нового элемента по параметрам
-function addNewElement(elLink, elName, elLikes, elMyCard, elImageId) {
+function addNewElement(elLink, elName, elLikes, elMyCard, elImageId, elMyLike) {
   const newEl = tempItem.cloneNode(true);
   const newElPhoto = newEl.querySelector('.elements__photo');
   const newElLike = newEl.querySelector('.elements__like');
@@ -76,14 +46,15 @@ function addNewElement(elLink, elName, elLikes, elMyCard, elImageId) {
   newEl.querySelector('.elements__title').textContent = elName;
   newElLike.dataset.count = elLikes;
   newElLike.dataset.imageid = elImageId;
-  newElLike.addEventListener('click', setLike);
+  newElLike.addEventListener('click', handleSetLikeButton);
   const elThrash = newEl.querySelector('.elements__thrash');
   if (elMyCard) {
     elThrash.dataset.id = elMyCard;
-    elThrash.addEventListener('click', deleteCard);
+    elThrash.addEventListener('click', handleDeleteCardButton);
   } else {
     elThrash.remove();
   }
+  if (elMyLike) newElLike.classList.toggle('elements__like_active');
   newElPhoto.addEventListener('click', function (evt) {
     popupImagePicture.src = elLink;
     popupImageTitle.textContent = elName;
@@ -93,4 +64,4 @@ function addNewElement(elLink, elName, elLikes, elMyCard, elImageId) {
   return newEl;
 }
 
-export { addNewElement, setUserInfo, setInitialCards };
+export { addNewElement };

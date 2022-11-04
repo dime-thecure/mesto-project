@@ -1,7 +1,7 @@
 import { enableValidation } from './validate.js';
 import { openPopup, closePopup } from './modal.js';
-import { setUserInfo, setInitialCards, addNewElement } from './card.js';
-import { setUserInfoToServer, changeAvatarToServer, addNewCardToServer } from "./api.js";
+import { addNewElement } from './card.js';
+import { getUserInfoFromServer, getInitialCardsFromServer, setUserInfoToServer, changeAvatarToServer, addNewCardToServer } from "./api.js";
 
 const profilePopup = document.querySelector('#profile');
 const profilePopupName = profilePopup.querySelector('#profile-name');
@@ -13,6 +13,43 @@ const newItemPopupInputAbout = newItemPopup.querySelector('#newItem-about');
 const newItemPopupInputName = newItemPopup.querySelector('#newItem-name');
 const popupImage = document.querySelector('#popupImage');
 const changeAvatarPopup = document.querySelector('#changeAvatar');
+let myId = '';
+
+function setUserInfo() {
+  getUserInfoFromServer()
+  .then((data) => {
+    const profileTitle = document.querySelector('.profile__title');
+    const profileSubTitle = document.querySelector('.profile__subtitle');
+    const profileAvatar = document.querySelector('.profile__avatar');
+    profileTitle.textContent = data.name;
+    profileSubTitle.textContent = data.about;
+    profileAvatar.src = data.avatar;
+    myId = data._id;
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+}
+
+function setInitialCards() {
+  getInitialCardsFromServer()
+  .then((data) => {
+    const elementsContainer = document.querySelector('.elements');
+    console.log(data);
+    let cardId = '';
+    data.forEach((newElement) => {
+      if (newElement.owner._id === myId)
+        cardId = newElement._id;
+      else cardId = '';
+      const myLike = newElement.likes.some(element => element._id === myId);
+      const newEl = addNewElement(newElement.link, newElement.name, newElement.likes.length, cardId, newElement._id, myLike);
+      elementsContainer.append(newEl);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+}
 
 //нажатие на Сохранить на форме аватара
 function handleAvatarPopupSubmitButton(evt) {
@@ -64,7 +101,7 @@ function handleNewItemPopupSubmitButton(evt) {
   .then((data) => {
     const cardId = data._id;
     const elementsContainer = document.querySelector('.elements');
-    const newEl = addNewElement(data.link, data.name,'0', cardId, cardId);
+    const newEl = addNewElement(data.link, data.name,'0', cardId, cardId, 0);
     elementsContainer.prepend(newEl);
     console.log(data);
     closePopup(newItemPopup);
