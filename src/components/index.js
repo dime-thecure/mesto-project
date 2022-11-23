@@ -1,7 +1,10 @@
 import { enableValidation } from './validate.js';
 import { openPopup, closePopup } from './modal.js';
 import { addNewElement, Card } from './card.js';
-import { getUserInfoFromServer, getInitialCardsFromServer, setUserInfoToServer, changeAvatarToServer, addNewCardToServer } from "./api.js";
+//import { getUserInfoFromServer, getInitialCardsFromServer, setUserInfoToServer, changeAvatarToServer, addNewCardToServer } from "./api.js";
+
+import { myUrl, myToken, myGroup } from "./consts.js"
+import API from './api.js';
 
 const profilePopup = document.querySelector('#profile');
 const profilePopupName = profilePopup.querySelector('#profile-name');
@@ -29,12 +32,26 @@ function setUserInfo() {
     .catch((err) => {
       console.log(err);
     });
+  api.getUserInfoFromServer()
+    .then((data) => {
+      const profileTitle = document.querySelector('.profile__title');
+      const profileSubTitle = document.querySelector('.profile__subtitle');
+      const profileAvatar = document.querySelector('.profile__avatar');
+      profileTitle.textContent = data.name;
+      profileSubTitle.textContent = data.about;
+      profileAvatar.src = data.avatar;
+      myId = data._id;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 function setInitialCards() {
   getInitialCardsFromServer()
     .then((data) => {
       const elementsContainer = document.querySelector('.elements');
+      console.log(data);
       let cardId = '';
       data.forEach((newElement) => {
         if (newElement.owner._id === myId)
@@ -69,6 +86,18 @@ function handleAvatarPopupSubmitButton(evt) {
     .finally(() => {
       popupButton.textContent = popupButton.dataset.text;
     });
+  api.changeAvatarToServer(url)
+    .then((data) => {
+      document.querySelector('.profile__avatar').src = url;
+      closePopup(changeAvatarPopup);
+      evt.target.reset();
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      popupButton.textContent = popupButton.dataset.text;
+    });
 }
 
 //нажатие на Сохранить формы профиля
@@ -81,6 +110,18 @@ function handleProfilePopupSubmitButton(evt) {
       profileTitle.textContent = profilePopupName.value;
       profileSubTitle.textContent = profilePopupAbout.value;
       console.log(data);
+      closePopup(profilePopup);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      popupButton.textContent = popupButton.dataset.text;
+    });
+  api.setUserInfoToServer(profilePopupName.value, profilePopupAbout.value)
+    .then((data) => {
+      profileTitle.textContent = profilePopupName.value;
+      profileSubTitle.textContent = profilePopupAbout.value;
       closePopup(profilePopup);
     })
     .catch((err) => {
@@ -103,6 +144,22 @@ function handleNewItemPopupSubmitButton(evt) {
       const newEl = addNewElement(data.link, data.name, '0', cardId, cardId, 0);
       elementsContainer.prepend(newEl);
       console.log(data);
+      closePopup(newItemPopup);
+      evt.target.reset();
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      popupButton.textContent = popupButton.dataset.text;
+    });
+  api.addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
+    .then((data) => {
+      const cardId = data._id;
+      const elementsContainer = document.querySelector('.elements');
+      const newEl = addNewElement(data.link, data.name, '0', cardId, cardId, 0);
+      elementsContainer.prepend(newEl);
+
       closePopup(newItemPopup);
       evt.target.reset();
     })
@@ -163,6 +220,8 @@ function setDocumentEventListeners() {
   });
 
 }
+
+export const api = new API(myUrl, myGroup, myToken);
 
 //Загружаем профиль
 setUserInfo();

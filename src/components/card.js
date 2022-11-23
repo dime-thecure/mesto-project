@@ -1,5 +1,6 @@
 import { openPopup } from "./modal";
-import { deleteCardFromServer, setLikeToServer } from "./api.js";
+//import { deleteCardFromServer, setLikeToServer } from "./api.js";
+import { api } from './index.js';
 
 const tempItem = document.querySelector('#element').content.querySelector('.elements__element');
 const popupImagePicture = popupImage.querySelector('.popup__image');
@@ -10,10 +11,9 @@ function deleteCard(evt) {
 }
 
 function handleDeleteCardButton(evt) {
-  deleteCardFromServer(evt)
+  api.deleteCardFromServer(evt)
     .then((data) => {
       deleteCard(evt);
-      console.log(data);
     })
     .catch((err) => {
       console.log(err);
@@ -26,10 +26,9 @@ function setLike(evt, likesCount) {
 }
 
 function handleSetLikeButton(evt) {
-  setLikeToServer(evt)
+  api.setLikeToServer(evt)
     .then((data) => {
       setLike(evt, data.likes.length);
-      console.log(data);
     })
     .catch((err) => {
       console.log(err);
