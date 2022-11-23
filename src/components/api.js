@@ -4,7 +4,7 @@ const myGroup = 'plus-cohort-16';
 
 function getResponseData(res) {
   if (!res.ok) {
-      return Promise.reject('Ошибка: ${res.status}');
+    return Promise.reject('Ошибка: ${res.status}');
   }
   return res.json();
 }
@@ -17,9 +17,9 @@ function getUserInfoFromServer() {
       authorization: `${myToken}`
     }
   })
-  .then((res) => {
-    return getResponseData(res);
-  });
+    .then((res) => {
+      return getResponseData(res);
+    })
 }
 
 function getInitialCardsFromServer() {
@@ -30,9 +30,9 @@ function getInitialCardsFromServer() {
       authorization: `${myToken}`
     }
   })
-  .then((res) => {
-    return getResponseData(res);
-  });
+    .then((res) => {
+      return getResponseData(res)
+    })
 }
 
 function setUserInfoToServer(name, about) {
@@ -48,9 +48,9 @@ function setUserInfoToServer(name, about) {
       about: `${about}`
     })
   })
-  .then((res) => {
-    return getResponseData(res);
-  });
+    .then((res) => {
+      return getResponseData(res);
+    });
 }
 
 function addNewCardToServer(link, name) {
@@ -66,9 +66,9 @@ function addNewCardToServer(link, name) {
       link: `${link}`
     })
   })
-  .then((res) => {
-    return getResponseData(res);
-  });
+    .then((res) => {
+      return getResponseData(res);
+    });
 }
 
 function deleteCardFromServer(evt) {
@@ -80,9 +80,9 @@ function deleteCardFromServer(evt) {
       authorization: `${myToken}`
     }
   })
-  .then((res) => {
-    return getResponseData(res);
-  });
+    .then((res) => {
+      return getResponseData(res);
+    });
 }
 
 function changeAvatarToServer(url) {
@@ -97,9 +97,10 @@ function changeAvatarToServer(url) {
       avatar: `${url}`
     })
   })
-  .then((res) => {
-    return getResponseData(res);
-  });
+    .then((res) => {
+
+      return getResponseData(res);
+    });
 }
 
 function setLikeToServer(evt) {
@@ -117,9 +118,9 @@ function setLikeToServer(evt) {
       authorization: `${myToken}`
     }
   })
-  .then((res) => {
-    return getResponseData(res);
-  });
+    .then((res) => {
+      return getResponseData(res);
+    });
 }
 
 export { getUserInfoFromServer, getInitialCardsFromServer, setUserInfoToServer, addNewCardToServer, deleteCardFromServer, setLikeToServer, changeAvatarToServer }
