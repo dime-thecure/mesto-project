@@ -1,6 +1,6 @@
 import { enableValidation } from './validate.js';
 import { openPopup, closePopup } from './modal.js';
-import { addNewElement } from './card.js';
+import { addNewElement, Card } from './card.js';
 //import { getUserInfoFromServer, getInitialCardsFromServer, setUserInfoToServer, changeAvatarToServer, addNewCardToServer } from "./api.js";
 
 import { myUrl, myToken, myGroup } from "./consts.js"
@@ -19,6 +19,19 @@ const changeAvatarPopup = document.querySelector('#changeAvatar');
 let myId = '';
 
 function setUserInfo() {
+  getUserInfoFromServer()
+    .then((data) => {
+      const profileTitle = document.querySelector('.profile__title');
+      const profileSubTitle = document.querySelector('.profile__subtitle');
+      const profileAvatar = document.querySelector('.profile__avatar');
+      profileTitle.textContent = data.name;
+      profileSubTitle.textContent = data.about;
+      profileAvatar.src = data.avatar;
+      myId = data._id;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   api.getUserInfoFromServer()
     .then((data) => {
       const profileTitle = document.querySelector('.profile__title');
@@ -35,9 +48,10 @@ function setUserInfo() {
 }
 
 function setInitialCards() {
-  api.getInitialCardsFromServer()
+  getInitialCardsFromServer()
     .then((data) => {
       const elementsContainer = document.querySelector('.elements');
+      console.log(data);
       let cardId = '';
       data.forEach((newElement) => {
         if (newElement.owner._id === myId)
@@ -59,6 +73,19 @@ function handleAvatarPopupSubmitButton(evt) {
   const popupButton = evt.target.querySelector('.popup__button');
   popupButton.textContent = 'Сохранение...';
   const url = changeAvatarPopup.querySelector('#changeAvatar-about').value;
+  changeAvatarToServer(url)
+    .then((data) => {
+      document.querySelector('.profile__avatar').src = url;
+      console.log(data);
+      closePopup(changeAvatarPopup);
+      evt.target.reset();
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      popupButton.textContent = popupButton.dataset.text;
+    });
   api.changeAvatarToServer(url)
     .then((data) => {
       document.querySelector('.profile__avatar').src = url;
@@ -78,6 +105,19 @@ function handleProfilePopupSubmitButton(evt) {
   evt.preventDefault();
   const popupButton = evt.target.querySelector('.popup__button');
   popupButton.textContent = 'Сохранение...';
+  setUserInfoToServer(profilePopupName.value, profilePopupAbout.value)
+    .then((data) => {
+      profileTitle.textContent = profilePopupName.value;
+      profileSubTitle.textContent = profilePopupAbout.value;
+      console.log(data);
+      closePopup(profilePopup);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      popupButton.textContent = popupButton.dataset.text;
+    });
   api.setUserInfoToServer(profilePopupName.value, profilePopupAbout.value)
     .then((data) => {
       profileTitle.textContent = profilePopupName.value;
@@ -97,6 +137,22 @@ function handleNewItemPopupSubmitButton(evt) {
   evt.preventDefault();
   const popupButton = evt.target.querySelector('.popup__button');
   popupButton.textContent = 'Сохранение...';
+  addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
+    .then((data) => {
+      const cardId = data._id;
+      const elementsContainer = document.querySelector('.elements');
+      const newEl = addNewElement(data.link, data.name, '0', cardId, cardId, 0);
+      elementsContainer.prepend(newEl);
+      console.log(data);
+      closePopup(newItemPopup);
+      evt.target.reset();
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      popupButton.textContent = popupButton.dataset.text;
+    });
   api.addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
     .then((data) => {
       const cardId = data._id;
@@ -182,3 +238,12 @@ enableValidation({
   inputErrorClass: 'popup__input_error',
   errorClass: 'popup__input-error_active'
 });
+
+
+// проверяем рабоспособность класса Card
+const card = new Card({
+  elLink: "https://ae04.alicdn.com/kf/S2a6478f3892b489e8dbc616b74e4c3abq/-.jpg", elName: "Шрекси",
+  elLikes: 2, elMyLike: false, selector: '.elements__element'
+});
+
+card.renderCard();
