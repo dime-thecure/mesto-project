@@ -1,6 +1,6 @@
 import { enableValidation } from './validate.js';
 import { openPopup, closePopup } from './modal.js';
-import { addNewElement, Card } from './card.js';
+import { Card } from './card.js';
 import { myUrl, myToken, myGroup } from "./consts.js"
 import API from './api.js';
 import { userInfo } from './userinfo.js';
