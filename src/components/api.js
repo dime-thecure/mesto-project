@@ -27,9 +27,9 @@ export default class API {
         authorization: `${this._token}`
       }
     })
-    .then((res) => {
-      return this._getResponseData(res);
-    });
+      .then((res) => {
+        return this._getResponseData(res);
+      });
   }
 
   getInitialCardsFromServer() {
@@ -40,9 +40,9 @@ export default class API {
         authorization: `${this._token}`
       }
     })
-    .then((res) => {
-      return this._getResponseData(res);
-    });
+      .then((res) => {
+        return this._getResponseData(res);
+      });
   }
 
   setUserInfoToServer(name, about) {
@@ -58,9 +58,9 @@ export default class API {
         about: `${about}`
       })
     })
-    .then((res) => {
-      return this._getResponseData(res);
-    });
+      .then((res) => {
+        return this._getResponseData(res);
+      });
   }
 
   addNewCardToServer(link, name) {
@@ -76,9 +76,9 @@ export default class API {
         link: `${link}`
       })
     })
-    .then((res) => {
-      return this._getResponseData(res);
-    });
+      .then((res) => {
+        return this._getResponseData(res);
+      });
   }
 
   deleteCardFromServer(evt) {
@@ -90,9 +90,9 @@ export default class API {
         authorization: `${this._token}`
       }
     })
-    .then((res) => {
-      return this._getResponseData(res);
-    });
+      .then((res) => {
+        return this._getResponseData(res);
+      });
   }
 
   changeAvatarToServer(url) {
@@ -107,16 +107,15 @@ export default class API {
         avatar: `${url}`
       })
     })
-    .then((res) => {
-      return this._getResponseData(res);
-    });
+      .then((res) => {
+        return this._getResponseData(res);
+      });
   }
 
-  setLikeToServer(evt) {
-    const cardId = evt.target.dataset.imageid;
+  setLikeToServer(cardId, hasMyLike) {
     const userUrl = this._baseURL + this._group + '/cards/likes/' + cardId;
     let methodType = '';
-    if (evt.target.classList.contains('elements__like_active')) {
+    if (hasMyLike) {
       methodType = 'DELETE';
     } else {
       methodType = 'PUT';
@@ -127,9 +126,9 @@ export default class API {
         authorization: `${this._token}`
       }
     })
-    .then((res) => {
-      return this._getResponseData(res);
-    });
+      .then((res) => {
+        return this._getResponseData(res);
+      });
   }
 
 }

@@ -1,6 +1,6 @@
 import { enableValidation } from './validate.js';
 import { openPopup, closePopup } from './modal.js';
-import { addNewElement, Card } from './card.js';
+import { Card } from './card.js';
 //import { getUserInfoFromServer, getInitialCardsFromServer, setUserInfoToServer, changeAvatarToServer, addNewCardToServer } from "./api.js";
 
 import { myUrl, myToken, myGroup } from "./consts.js"
@@ -50,17 +50,15 @@ function setUserInfo() {
 function setInitialCards() {
   api.getInitialCardsFromServer()
     .then((data) => {
-      const elementsContainer = document.querySelector('.elements');
+
+      // смотрим структуру ответа для отладки (потом удалить)
       console.log(data);
-      let cardId = '';
+
       data.forEach((newElement) => {
-        if (newElement.owner._id === myId)
-          cardId = newElement._id;
-        else cardId = '';
-        const myLike = newElement.likes.some(element => element._id === myId);
-        const newEl = addNewElement(newElement.link, newElement.name, newElement.likes.length, cardId, newElement._id, myLike);
-        elementsContainer.append(newEl);
+        const newCard = new Card({ ...newElement, myId }, '.elements__element');
+        newCard.renderCard();
       });
+
     })
     .catch((err) => {
       console.log(err);
@@ -105,19 +103,6 @@ function handleProfilePopupSubmitButton(evt) {
   evt.preventDefault();
   const popupButton = evt.target.querySelector('.popup__button');
   popupButton.textContent = 'Сохранение...';
-  setUserInfoToServer(profilePopupName.value, profilePopupAbout.value)
-    .then((data) => {
-      profileTitle.textContent = profilePopupName.value;
-      profileSubTitle.textContent = profilePopupAbout.value;
-      console.log(data);
-      closePopup(profilePopup);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-    .finally(() => {
-      popupButton.textContent = popupButton.dataset.text;
-    });
   api.setUserInfoToServer(profilePopupName.value, profilePopupAbout.value)
     .then((data) => {
       profileTitle.textContent = profilePopupName.value;
@@ -238,12 +223,3 @@ enableValidation({
   inputErrorClass: 'popup__input_error',
   errorClass: 'popup__input-error_active'
 });
-
-
-// проверяем рабоспособность класса Card
-const card = new Card({
-  link: "https://timeforimage.ru/images/cache/b41-00_black_cat-718-.jpg", title: "Кыся", likes: 2,
-  isMyCard: true, hasMyLike: true, selector: '.elements__element'
-});
-
-card.renderCard();
