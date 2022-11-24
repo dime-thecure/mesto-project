@@ -5,12 +5,13 @@ import { addNewElement, Card } from './card.js';
 
 import { myUrl, myToken, myGroup } from "./consts.js"
 import API from './api.js';
+import { userInfo } from './userinfo.js';
 
 const profilePopup = document.querySelector('#profile');
 const profilePopupName = profilePopup.querySelector('#profile-name');
 const profilePopupAbout = profilePopup.querySelector('#profile-about');
-const profileTitle = document.querySelector('.profile__title');
-const profileSubTitle = document.querySelector('.profile__subtitle');
+// const profileTitle = document.querySelector('.profile__title');
+// const profileSubTitle = document.querySelector('.profile__subtitle');
 const newItemPopup = document.querySelector('#newItem');
 const newItemPopupInputAbout = newItemPopup.querySelector('#newItem-about');
 const newItemPopupInputName = newItemPopup.querySelector('#newItem-name');
@@ -34,12 +35,14 @@ function setUserInfo() {
     });
   api.getUserInfoFromServer()
     .then((data) => {
-      const profileTitle = document.querySelector('.profile__title');
-      const profileSubTitle = document.querySelector('.profile__subtitle');
-      const profileAvatar = document.querySelector('.profile__avatar');
-      profileTitle.textContent = data.name;
-      profileSubTitle.textContent = data.about;
-      profileAvatar.src = data.avatar;
+      // const profileTitle = document.querySelector('.profile__title');
+      // const profileSubTitle = document.querySelector('.profile__subtitle');
+      // const profileAvatar = document.querySelector('.profile__avatar');
+      // profileTitle.textContent = data.name;
+      // profileSubTitle.textContent = data.about;
+      // profileAvatar.src = data.avatar;
+      userInfo.setUserInfo(data);
+      userInfo.setUserAvatar(data);
       myId = data._id;
     })
     .catch((err) => {
@@ -88,7 +91,8 @@ function handleAvatarPopupSubmitButton(evt) {
     });
   api.changeAvatarToServer(url)
     .then((data) => {
-      document.querySelector('.profile__avatar').src = url;
+      //document.querySelector('.profile__avatar').src = url;
+      userInfo.setUserAvatar({ avatar: url });
       closePopup(changeAvatarPopup);
       evt.target.reset();
     })
@@ -120,8 +124,9 @@ function handleProfilePopupSubmitButton(evt) {
     });
   api.setUserInfoToServer(profilePopupName.value, profilePopupAbout.value)
     .then((data) => {
-      profileTitle.textContent = profilePopupName.value;
-      profileSubTitle.textContent = profilePopupAbout.value;
+      // profileTitle.textContent = profilePopupName.value;
+      // profileSubTitle.textContent = profilePopupAbout.value;
+      userInfo.setUserInfo(data);
       closePopup(profilePopup);
     })
     .catch((err) => {
@@ -175,8 +180,11 @@ function handleNewItemPopupSubmitButton(evt) {
 function setDocumentEventListeners() {
   //нажатие на кнопку редактирования профиля на странице
   document.querySelector('.profile__edit-button').addEventListener('click', function () {
-    profilePopupName.value = profileTitle.textContent;
-    profilePopupAbout.value = profileSubTitle.textContent;
+    const { name, about } = userInfo.getUserInfo();
+    profilePopupName.value = name;
+    profilePopupAbout.value = about;
+    // profilePopupName.value = profileTitle.textContent;
+    // profilePopupAbout.value = profileSubTitle.textContent;
     openPopup(profilePopup);
   });
 
