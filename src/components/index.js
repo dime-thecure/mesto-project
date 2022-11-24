@@ -30,17 +30,15 @@ function setUserInfo() {
 function setInitialCards() {
   api.getInitialCardsFromServer()
     .then((data) => {
-      const elementsContainer = document.querySelector('.elements');
+
+      // смотрим структуру ответа для отладки (потом удалить)
       console.log(data);
-      let cardId = '';
+
       data.forEach((newElement) => {
-        if (newElement.owner._id === myId)
-          cardId = newElement._id;
-        else cardId = '';
-        const myLike = newElement.likes.some(element => element._id === myId);
-        const newEl = addNewElement(newElement.link, newElement.name, newElement.likes.length, cardId, newElement._id, myLike);
-        elementsContainer.append(newEl);
+        const newCard = new Card({ ...newElement, myId }, '.elements__element');
+        newCard.renderCard();
       });
+
     })
     .catch((err) => {
       console.log(err);
@@ -175,12 +173,3 @@ enableValidation({
   inputErrorClass: 'popup__input_error',
   errorClass: 'popup__input-error_active'
 });
-
-
-// проверяем рабоспособность класса Card
-const card = new Card({
-  elLink: "https://ae04.alicdn.com/kf/S2a6478f3892b489e8dbc616b74e4c3abq/-.jpg", elName: "Шрекси",
-  elLikes: 2, elMyLike: false, selector: '.elements__element'
-});
-
-card.renderCard();

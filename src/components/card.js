@@ -1,5 +1,4 @@
 import { openPopup } from "./modal";
-//import { deleteCardFromServer, setLikeToServer } from "./api.js";
 import { api } from './index.js';
 
 const tempItem = document.querySelector('#element').content.querySelector('.elements__element');
@@ -35,99 +34,115 @@ function handleSetLikeButton(evt) {
     });
 }
 
-//добавление нового элемента по параметрам
-function addNewElement(elLink, elName, elLikes, elMyCard, elImageId, elMyLike) {
-  const newEl = tempItem.cloneNode(true);
-  const newElPhoto = newEl.querySelector('.elements__photo');
-  const newElLike = newEl.querySelector('.elements__like');
-  newElPhoto.src = elLink;
-  newElPhoto.alt = 'Фото ' + elName;
-  newEl.querySelector('.elements__title').textContent = elName;
-  newElLike.dataset.count = elLikes;
-  newElLike.dataset.imageid = elImageId;
-  newElLike.addEventListener('click', handleSetLikeButton);
-  const elThrash = newEl.querySelector('.elements__thrash');
-  if (elMyCard) {
-    elThrash.dataset.id = elMyCard;
-    elThrash.addEventListener('click', handleDeleteCardButton);
-  } else {
-    elThrash.remove();
-  }
-  if (elMyLike) newElLike.classList.toggle('elements__like_active');
-  newElPhoto.addEventListener('click', function (evt) {
-    popupImagePicture.src = elLink;
-    popupImageTitle.textContent = elName;
-    popupImagePicture.alt = 'Фото ' + elName;
-    openPopup(popupImage);
-  });
-  return newEl;
-}
+// //добавление нового элемента по параметрам
+// function addNewElement(elLink, elName, elLikes, elMyCard, elImageId, elMyLike) {
+//   const newEl = tempItem.cloneNode(true);
+//   const newElPhoto = newEl.querySelector('.elements__photo');
+//   const newElLike = newEl.querySelector('.elements__like');
+//   newElPhoto.src = elLink;
+//   newElPhoto.alt = 'Фото ' + elName;
+//   newEl.querySelector('.elements__title').textContent = elName;
+//   newElLike.dataset.count = elLikes;
+//   newElLike.dataset.imageid = elImageId;
+//   newElLike.addEventListener('click', handleSetLikeButton);
+//   const elThrash = newEl.querySelector('.elements__thrash');
+//   if (elMyCard) {
+//     elThrash.dataset.id = elMyCard;
+//     elThrash.addEventListener('click', handleDeleteCardButton);
+//   } else {
+//     elThrash.remove();
+//   }
+//   if (elMyLike) newElLike.classList.toggle('elements__like_active');
+//   newElPhoto.addEventListener('click', (evt) => {
+//     popupImagePicture.src = elLink;
+//     popupImageTitle.textContent = elName;
+//     popupImagePicture.alt = 'Фото ' + elName;
+//     openPopup(popupImage);
+//   });
+//   return newEl;
+// }
 
-export { addNewElement };
+// export { addNewElement };
 
 
 // логика Card, реализованная в ООП
 export class Card {
-
   // принимаем в конструктор данные карточки и селектор её template-элемента
-  constructor({ elLink, elName, elLikes, elMyCard, elMyLike, selector }) {
-    this._elName = elName;
-    this._elLink = elLink;
-    this._elLikes = elLikes;
-    this._elMyLike = elMyLike;
-    this._elMyCard = elMyCard;
+  constructor(data, selector) {
+    this._link = data.link;
+    this._title = data.name;
+    this._likes = data.likes.length;
+    this._isMyCard = data.owner._id === data.myId;
+    this._hasMyLike = data.likes.some(element => element._id === data.myId);
+    this._id = data._id;
     this._selector = selector;
   }
 
   // возвращаем DOM-элемент карточки
   _getElement() {
-    const cardElement = document.querySelector('#element').content.querySelector(this._selector).cloneNode(true);
+    return document.querySelector('#element').content.querySelector(this._selector).cloneNode(true);
     // "селектор её template-элемента" - это #element, .elements__element или целая строка нахождения элемента? (решить вопрос)
-    return cardElement;
   }
 
   // заполняем карточку содержимым
   generate() {
     this._element = this._getElement();
-    this._element.querySelector('.elements__title').textContent = this._elName;
-    this._element.querySelector('.elements__photo').src = this._elLink;
-    this._element.querySelector('.elements__photo').alt = this._elName;
-    this._element.querySelector('.elements__like').dataset.count = this._elLikes; //length?
+    this._element.querySelector('.elements__title').textContent = this._title;
+    this._element.querySelector('.elements__photo').src = this._link;
+    this._element.querySelector('.elements__photo').alt = this._title;
+    this._element.querySelector('.elements__like').dataset.count = this._likes; //length?
 
-    // Вернём элемент в качестве результата работы метода
+    //изначально активируем или не актвируем кнопку лайка
+    const like = this._element.querySelector('.elements__like');
+    if (this._hasMyLike) like.classList.add('elements__like_active');
+
+    // возвращаем элемент в качестве результата работы метода
     return this._element;
   }
 
-  //содержит приватные методы, которые работают с разметкой, устанавливают слушателей событий;
+  //учтанавливаем слушатели событий;
   _addEventListeners() {
-    if (this._elMyCard) this._element.querySelector(".elements__thrash").addEventListener("click", function () { });
+    const deleteButton = this._element.querySelector('.elements__thrash');
+    if (this._isMyCard) {
+      deleteButton.dataset.id = this._isMyCard;
+      this._element.querySelector(".elements__thrash").addEventListener("click", handleDeleteCardButton)
+    } else {
+      deleteButton.remove();
+    };
 
-    this._element.querySelector(".elements__like").addEventListener("click", function () { });
-
-    this._element.querySelector(".elements__photo").addEventListener('click', function (evt) {
-      popupImagePicture.src = this._elLink;
-      popupImageTitle.textContent = this._elName;
-      popupImagePicture.alt = 'Фото ' + this._elName;
+    this._element.querySelector(".elements__photo").addEventListener('click', () => {
+      popupImagePicture.src = this._link;
+      popupImageTitle.textContent = this._title;
+      popupImagePicture.alt = 'Фото ' + this._title;
       openPopup(popupImage);
     });
 
-  }
+    const like = this._element.querySelector('.elements__like');
+    like.addEventListener("click", (evt) => {
+      if (this._hasMyLike) {
+        api.setLikeToServer(this._id, this._hasMyLike).then((data) => {
+          evt.target.classList.remove('elements__like_active');
+          evt.target.dataset.count = data.likes.length;
+          this._hasMyLike = false;
+        });
 
-  //содержит приватные методы для каждого обработчика;
-  _handleLike() {
-    if (this._elMyLike) this._element.classList.toggle('elements__like_active');
+      } else {
+        api.setLikeToServer(this._id, this._hasMyLike).then((data) => {
+          evt.target.classList.add('elements__like_active');
+          evt.target.dataset.count = data.likes.length;
+          this._hasMyLike = true;
+        });
+      }
+    })
   }
 
   //содержит один публичный метод, который возвращает полностью работоспособный и наполненный данными элемент карточки
   renderCard() {
     const newCard = this.generate();
-
-    this._handleLike();
     this._addEventListeners();
 
     //добавим их в DOM для отладки
     const elementsContainer = document.querySelector('.elements');
     elementsContainer.append(newCard);
   }
-
 }
