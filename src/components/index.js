@@ -1,16 +1,13 @@
 import { enableValidation } from './validate.js';
 import { openPopup, closePopup } from './modal.js';
-import { Card } from './card.js';
-//import { getUserInfoFromServer, getInitialCardsFromServer, setUserInfoToServer, changeAvatarToServer, addNewCardToServer } from "./api.js";
-
+import { addNewElement, Card } from './card.js';
 import { myUrl, myToken, myGroup } from "./consts.js"
 import API from './api.js';
+import { userInfo } from './userinfo.js';
 
 const profilePopup = document.querySelector('#profile');
 const profilePopupName = profilePopup.querySelector('#profile-name');
 const profilePopupAbout = profilePopup.querySelector('#profile-about');
-const profileTitle = document.querySelector('.profile__title');
-const profileSubTitle = document.querySelector('.profile__subtitle');
 const newItemPopup = document.querySelector('#newItem');
 const newItemPopupInputAbout = newItemPopup.querySelector('#newItem-about');
 const newItemPopupInputName = newItemPopup.querySelector('#newItem-name');
@@ -21,25 +18,8 @@ let myId = '';
 function setUserInfo() {
   api.getUserInfoFromServer()
     .then((data) => {
-      const profileTitle = document.querySelector('.profile__title');
-      const profileSubTitle = document.querySelector('.profile__subtitle');
-      const profileAvatar = document.querySelector('.profile__avatar');
-      profileTitle.textContent = data.name;
-      profileSubTitle.textContent = data.about;
-      profileAvatar.src = data.avatar;
-      myId = data._id;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  api.getUserInfoFromServer()
-    .then((data) => {
-      const profileTitle = document.querySelector('.profile__title');
-      const profileSubTitle = document.querySelector('.profile__subtitle');
-      const profileAvatar = document.querySelector('.profile__avatar');
-      profileTitle.textContent = data.name;
-      profileSubTitle.textContent = data.about;
-      profileAvatar.src = data.avatar;
+      userInfo.setUserInfo(data);
+      userInfo.setUserAvatar(data);
       myId = data._id;
     })
     .catch((err) => {
@@ -71,22 +51,9 @@ function handleAvatarPopupSubmitButton(evt) {
   const popupButton = evt.target.querySelector('.popup__button');
   popupButton.textContent = 'Сохранение...';
   const url = changeAvatarPopup.querySelector('#changeAvatar-about').value;
-  changeAvatarToServer(url)
-    .then((data) => {
-      document.querySelector('.profile__avatar').src = url;
-      console.log(data);
-      closePopup(changeAvatarPopup);
-      evt.target.reset();
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-    .finally(() => {
-      popupButton.textContent = popupButton.dataset.text;
-    });
   api.changeAvatarToServer(url)
     .then((data) => {
-      document.querySelector('.profile__avatar').src = url;
+      userInfo.setUserAvatar({ avatar: url });
       closePopup(changeAvatarPopup);
       evt.target.reset();
     })
@@ -105,8 +72,7 @@ function handleProfilePopupSubmitButton(evt) {
   popupButton.textContent = 'Сохранение...';
   api.setUserInfoToServer(profilePopupName.value, profilePopupAbout.value)
     .then((data) => {
-      profileTitle.textContent = profilePopupName.value;
-      profileSubTitle.textContent = profilePopupAbout.value;
+      userInfo.setUserInfo(data);
       closePopup(profilePopup);
     })
     .catch((err) => {
@@ -122,29 +88,12 @@ function handleNewItemPopupSubmitButton(evt) {
   evt.preventDefault();
   const popupButton = evt.target.querySelector('.popup__button');
   popupButton.textContent = 'Сохранение...';
-  addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
-    .then((data) => {
-      const cardId = data._id;
-      const elementsContainer = document.querySelector('.elements');
-      const newEl = addNewElement(data.link, data.name, '0', cardId, cardId, 0);
-      elementsContainer.prepend(newEl);
-      console.log(data);
-      closePopup(newItemPopup);
-      evt.target.reset();
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-    .finally(() => {
-      popupButton.textContent = popupButton.dataset.text;
-    });
   api.addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
     .then((data) => {
       const cardId = data._id;
       const elementsContainer = document.querySelector('.elements');
       const newEl = addNewElement(data.link, data.name, '0', cardId, cardId, 0);
       elementsContainer.prepend(newEl);
-
       closePopup(newItemPopup);
       evt.target.reset();
     })
@@ -160,8 +109,9 @@ function handleNewItemPopupSubmitButton(evt) {
 function setDocumentEventListeners() {
   //нажатие на кнопку редактирования профиля на странице
   document.querySelector('.profile__edit-button').addEventListener('click', function () {
-    profilePopupName.value = profileTitle.textContent;
-    profilePopupAbout.value = profileSubTitle.textContent;
+    const { name, about } = userInfo.getUserInfo();
+    profilePopupName.value = name;
+    profilePopupAbout.value = about;
     openPopup(profilePopup);
   });
 
