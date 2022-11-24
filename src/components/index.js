@@ -1,9 +1,9 @@
-import { enableValidation } from './validate.js';
+import FormValidator from './FormValidator.js';
 import { openPopup, closePopup } from './modal.js';
 import { Card } from './card.js';
-import { myUrl, myToken, myGroup } from "./consts.js"
-import API from './api.js';
-import { userInfo } from './userinfo.js';
+import { myUrl, myToken, myGroup, validationSettings } from "./consts.js"
+import API from './Api.js';
+import { userInfo } from './UserInfo.js';
 
 const profilePopup = document.querySelector('#profile');
 const profilePopupName = profilePopup.querySelector('#profile-name');
@@ -156,6 +156,16 @@ function setDocumentEventListeners() {
 
 }
 
+function enableValidation() {
+  const formList = Array.from(document.querySelectorAll('.form'));
+  const formValidationList = [];
+  formList.forEach((formElement, index) => {
+    formValidationList[index] = new FormValidator(validationSettings, formElement);
+    formValidationList[index].enableValidation();
+  });
+
+}
+
 export const api = new API(myUrl, myGroup, myToken);
 
 //Загружаем профиль
@@ -165,11 +175,5 @@ setInitialCards();
 //Ставим слушатели на все элементы документа
 setDocumentEventListeners();
 //Запускаем валидацию
-enableValidation({
-  formSelector: '.form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_error',
-  errorClass: 'popup__input-error_active'
-});
+//enableValidation(validationSettings);
+enableValidation();
