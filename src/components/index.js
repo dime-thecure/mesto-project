@@ -19,7 +19,7 @@ const changeAvatarPopup = document.querySelector('#changeAvatar');
 let myId = '';
 
 function setUserInfo() {
-  getUserInfoFromServer()
+  api.getUserInfoFromServer()
     .then((data) => {
       const profileTitle = document.querySelector('.profile__title');
       const profileSubTitle = document.querySelector('.profile__subtitle');
@@ -48,7 +48,7 @@ function setUserInfo() {
 }
 
 function setInitialCards() {
-  getInitialCardsFromServer()
+  api.getInitialCardsFromServer()
     .then((data) => {
       const elementsContainer = document.querySelector('.elements');
       console.log(data);
@@ -242,8 +242,8 @@ enableValidation({
 
 // проверяем рабоспособность класса Card
 const card = new Card({
-  elLink: "https://ae04.alicdn.com/kf/S2a6478f3892b489e8dbc616b74e4c3abq/-.jpg", elName: "Шрекси",
-  elLikes: 2, elMyLike: false, selector: '.elements__element'
+  link: "https://timeforimage.ru/images/cache/b41-00_black_cat-718-.jpg", title: "Кыся", likes: 2,
+  isMyCard: true, hasMyLike: true, selector: '.elements__element'
 });
 
 card.renderCard();
