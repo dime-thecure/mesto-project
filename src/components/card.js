@@ -90,6 +90,8 @@ export class Card {
     const like = this._element.querySelector('.elements__like');
     if (this._hasMyLike) like.classList.add('elements__like_active');
 
+    this._addEventListeners();
+
     // возвращаем элемент в качестве результата работы метода
     return this._element;
   }
@@ -127,13 +129,12 @@ export class Card {
     })
   }
 
-  //содержит один публичный метод, который возвращает полностью работоспособный и наполненный данными элемент карточки
-  renderCard() {
-    const newCard = this.generate();
-    this._addEventListeners();
+  // //содержит один публичный метод, который возвращает полностью работоспособный и наполненный данными элемент карточки
+  // renderCard() {
+  //   const newCard = this.generate();
 
-    //добавим их в DOM для отладки
-    const elementsContainer = document.querySelector('.elements');
-    elementsContainer.prepend(newCard);
-  }
+  //   //добавим их в DOM для отладки
+  //   const elementsContainer = document.querySelector('.elements');
+  //   elementsContainer.prepend(newCard);
+  // }
 }

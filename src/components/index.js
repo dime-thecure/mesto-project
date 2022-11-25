@@ -4,6 +4,7 @@ import { Card } from './card.js';
 import { myUrl, myToken, myGroup, validationSettings } from "./consts.js"
 import API from './Api.js';
 import { userInfo } from './UserInfo.js';
+import Section from './section.js'
 
 const profilePopup = document.querySelector('#profile');
 const profilePopupName = profilePopup.querySelector('#profile-name');
@@ -30,14 +31,18 @@ function setInitialCards() {
   api.getInitialCardsFromServer()
     .then((data) => {
 
-      // смотрим структуру ответа для отладки (потом удалить)
-      console.log(data);
+      const reversedData = data.reverse();
 
-      data.reverse().forEach((newElement) => {
-        const newCard = new Card({ ...newElement, myId }, '.elements__element');
-        newCard.renderCard();
-      });
+      const sec = new Section({
+        items: reversedData,
+        renderer: (item) => {
+          const newCard = new Card({ ...item, myId }, '.elements__element');
+          const cardEl = newCard.generate()
+          sec.addItem(cardEl)
+        }
+      }, '.elements');
 
+      sec.renderItems()
     })
     .catch((err) => {
       console.log(err);
@@ -88,10 +93,19 @@ function handleNewItemPopupSubmitButton(evt) {
   const popupButton = evt.target.querySelector('.popup__button');
   popupButton.textContent = 'Сохранение...';
   api.addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
-    .then((newElement) => {
-      const newCard = new Card({ ...newElement, myId }, '.elements__element');
-      console.log(newCard)
-      newCard.renderCard();
+    .then((data) => {
+
+      const sec = new Section({
+        items: [data],
+        renderer: (item) => {
+          const newCard = new Card({ ...item, myId }, '.elements__element');
+          const cardEl = newCard.generate()
+          sec.addItem(cardEl)
+        }
+      }, '.elements');
+
+      sec.renderItems()
+
     })
     .catch((err) => {
       console.log(err);
