@@ -81,9 +81,8 @@ export default class API {
       });
   }
 
-  deleteCardFromServer(evt) {
-    const id = evt.target.dataset.id;
-    const userUrl = this._baseURL + this._group + '/cards/' + id;
+  deleteCardFromServer(cardId) {
+    const userUrl = this._baseURL + this._group + '/cards/' + cardId;
     return fetch(userUrl, {
       method: 'DELETE',
       headers: {
