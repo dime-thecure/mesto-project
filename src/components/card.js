@@ -1,9 +1,6 @@
-import { openPopup } from "./modal";
+import { openPopup } from "./modal.js";
 import { api } from './index.js';
-
-const tempItem = document.querySelector('#element').content.querySelector('.elements__element');
-const popupImagePicture = popupImage.querySelector('.popup__image');
-const popupImageTitle = popupImage.querySelector('.popup__title');
+import { popupWithImage } from "./consts.js";
 
 function deleteCard(evt) {
   evt.target.closest('.elements__element').remove();
@@ -111,10 +108,11 @@ export class Card {
     };
 
     this._element.querySelector(".elements__photo").addEventListener('click', () => {
-      popupImagePicture.src = this._link;
-      popupImageTitle.textContent = this._title;
-      popupImagePicture.alt = 'Фото ' + this._title;
-      openPopup(popupImage);
+      //popupImagePicture.src = this._link;
+      //popupImageTitle.textContent = this._title;
+      //popupImagePicture.alt = 'Фото ' + this._title;
+      //openPopup(popupImage);
+      popupWithImage.open(this._link, this._title);
     });
 
     const like = this._element.querySelector('.elements__like');
