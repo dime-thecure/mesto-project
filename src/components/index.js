@@ -33,7 +33,7 @@ function setInitialCards() {
       // смотрим структуру ответа для отладки (потом удалить)
       console.log(data);
 
-      data.forEach((newElement) => {
+      data.reverse().forEach((newElement) => {
         const newCard = new Card({ ...newElement, myId }, '.elements__element');
         newCard.renderCard();
       });
@@ -88,19 +88,18 @@ function handleNewItemPopupSubmitButton(evt) {
   const popupButton = evt.target.querySelector('.popup__button');
   popupButton.textContent = 'Сохранение...';
   api.addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
-    .then((data) => {
-      const cardId = data._id;
-      const elementsContainer = document.querySelector('.elements');
-      const newEl = addNewElement(data.link, data.name, '0', cardId, cardId, 0);
-      elementsContainer.prepend(newEl);
-      closePopup(newItemPopup);
-      evt.target.reset();
+    .then((newElement) => {
+      const newCard = new Card({ ...newElement, myId }, '.elements__element');
+      console.log(newCard)
+      newCard.renderCard();
     })
     .catch((err) => {
       console.log(err);
     })
     .finally(() => {
+      evt.target.reset();
       popupButton.textContent = popupButton.dataset.text;
+      closePopup(newItemPopup);
     });
 }
 
