@@ -1,6 +1,6 @@
 import { openPopup } from "./modal.js";
 import { api } from './index.js';
-import { popupWithImage } from "./consts.js";
+import { popupWithImage } from './index.js';
 
 
 function handleCardDelete(cardId, card) {
