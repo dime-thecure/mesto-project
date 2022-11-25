@@ -4,6 +4,8 @@ import { Card } from './card.js';
 import { myUrl, myToken, myGroup, validationSettings } from "./consts.js"
 import API from './Api.js';
 import { userInfo } from './UserInfo.js';
+import PopupWithImage from './PopupWithImage.js';
+import PopupWithForm from './PopupWithForm.js';
 
 const profilePopup = document.querySelector('#profile');
 const profilePopupName = profilePopup.querySelector('#profile-name');
@@ -13,6 +15,11 @@ const newItemPopupInputAbout = newItemPopup.querySelector('#newItem-about');
 const newItemPopupInputName = newItemPopup.querySelector('#newItem-name');
 const changeAvatarPopup = document.querySelector('#changeAvatar');
 let myId = '';
+
+export const api = new API(myUrl, myGroup, myToken);
+
+export const popupWithImage = new PopupWithImage('#popupImage');
+popupWithImage.setEventListeners();
 
 function setUserInfo() {
   api.getUserInfoFromServer()
@@ -53,7 +60,8 @@ function handleAvatarPopupSubmitButton(evt) {
   api.changeAvatarToServer(url)
     .then((data) => {
       userInfo.setUserAvatar({ avatar: url });
-      closePopup(changeAvatarPopup);
+      //closePopup(changeAvatarPopup);
+      changeAvatarPopupWithForm.close();
       evt.target.reset();
     })
     .catch((err) => {
@@ -72,7 +80,8 @@ function handleProfilePopupSubmitButton(evt) {
   api.setUserInfoToServer(profilePopupName.value, profilePopupAbout.value)
     .then((data) => {
       userInfo.setUserInfo(data);
-      closePopup(profilePopup);
+      //closePopup(profilePopup);
+      profilePopupWithForm.close();
     })
     .catch((err) => {
       console.log(err);
@@ -106,44 +115,46 @@ function handleNewItemPopupSubmitButton(evt) {
 
 //cтавим слушатели на все элементы документа
 function setDocumentEventListeners() {
-  //нажатие на кнопку редактирования профиля на странице
-  document.querySelector('.profile__edit-button').addEventListener('click', function () {
-    const { name, about } = userInfo.getUserInfo();
-    profilePopupName.value = name;
-    profilePopupAbout.value = about;
-    openPopup(profilePopup);
-  });
-
-  //нажатие на крестик закрытия на форме профиля
-  profilePopup.querySelector('.popup__close-button').addEventListener('click', function () {
-    closePopup(profilePopup);
-  });
-
-  //нажатие на Сохранить на форме профиля
-  profilePopup.querySelector('#form-profile').addEventListener('submit', handleProfilePopupSubmitButton);
-
-  //нажатие на кнопку добавления нового места на странице
-  document.querySelector('.profile__add-button').addEventListener('click', function () {
-    openPopup(newItemPopup);
-  });
+  // //нажатие на крестик закрытия на форме профиля
+  // profilePopup.querySelector('.popup__close-button').addEventListener('click', () => {
+  //   closePopup(profilePopup);
+  // });
 
   //нажатие на крестик закрытия на форме нового места
-  newItemPopup.querySelector('.popup__close-button').addEventListener('click', function () {
+  newItemPopup.querySelector('.popup__close-button').addEventListener('click', () => {
     closePopup(newItemPopup);
   });
 
+  // //нажатие на крестик закрытия формы редактирования аватара
+  // changeAvatarPopup.querySelector('.popup__close-button').addEventListener('click', () => {
+  //   closePopup(changeAvatarPopup);
+  // });
+
+  //нажатие на кнопку редактирования профиля на странице
+  document.querySelector('.profile__edit-button').addEventListener('click', () => {
+    const { name, about } = userInfo.getUserInfo();
+    profilePopupName.value = name;
+    profilePopupAbout.value = about;
+    //openPopup(profilePopup);
+    profilePopupWithForm.open();
+  });
+
+  //нажатие на Сохранить на форме профиля
+  //profilePopup.querySelector('#form-profile').addEventListener('submit', handleProfilePopupSubmitButton);
+
+  //нажатие на кнопку добавления нового места на странице
+  document.querySelector('.profile__add-button').addEventListener('click', () => {
+    openPopup(newItemPopup);
+  });
+
   //нажатие на кнопку редактирования аватара
-  document.querySelector('.profile__image-block').addEventListener('click', function () {
-    openPopup(changeAvatarPopup);
+  document.querySelector('.profile__image-block').addEventListener('click', () => {
+    //openPopup(changeAvatarPopup);
+    changeAvatarPopupWithForm.open();
   });
 
-  //нажатие на крестик закрытия формы редактирования аватара
-  changeAvatarPopup.querySelector('.popup__close-button').addEventListener('click', function () {
-    closePopup(changeAvatarPopup);
-  });
-
-  //нажатие на Сохранить на форме редактирования аватара
-  changeAvatarPopup.querySelector('#form-changeAvatar').addEventListener('submit', handleAvatarPopupSubmitButton);
+  // //нажатие на Сохранить на форме редактирования аватара
+  // changeAvatarPopup.querySelector('#form-changeAvatar').addEventListener('submit', handleAvatarPopupSubmitButton);
 
   //нажатие на Создать на форме нового места
   newItemPopup.querySelector('#form-newItem').addEventListener('submit', handleNewItemPopupSubmitButton);
@@ -157,14 +168,18 @@ function setDocumentEventListeners() {
 
 function enableValidation() {
   const formList = Array.from(document.querySelectorAll('.form'));
-  formList.forEach((formElement, index) => {
+  formList.forEach((formElement) => {
     const instance = new FormValidator(validationSettings, formElement);
     instance.enableValidation();
   });
 
 }
 
-export const api = new API(myUrl, myGroup, myToken);
+const profilePopupWithForm = new PopupWithForm ({selector: '#profile', handlePopupSubmitButton: handleProfilePopupSubmitButton});
+profilePopupWithForm.setEventListeners();
+
+const changeAvatarPopupWithForm = new PopupWithForm ({selector: '#changeAvatar', handlePopupSubmitButton: handleAvatarPopupSubmitButton});
+changeAvatarPopupWithForm.setEventListeners();
 
 //Загружаем профиль
 setUserInfo();
@@ -173,5 +188,4 @@ setInitialCards();
 //Ставим слушатели на все элементы документа
 setDocumentEventListeners();
 //Запускаем валидацию
-//enableValidation(validationSettings);
 enableValidation();
