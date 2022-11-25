@@ -2,14 +2,11 @@ import { openPopup } from "./modal.js";
 import { api } from './index.js';
 import { popupWithImage } from "./consts.js";
 
-function deleteCard(evt) {
-  evt.target.closest('.elements__element').remove();
-}
 
-function handleDeleteCardButton(evt) {
-  api.deleteCardFromServer(evt)
+function handleCardDelete(cardId, card) {
+  api.deleteCardFromServer(cardId)
     .then((data) => {
-      deleteCard(evt);
+      card.remove();
     })
     .catch((err) => {
       console.log(err);
@@ -93,6 +90,8 @@ export class Card {
     const like = this._element.querySelector('.elements__like');
     if (this._hasMyLike) like.classList.add('elements__like_active');
 
+    this._addEventListeners();
+
     // возвращаем элемент в качестве результата работы метода
     return this._element;
   }
@@ -102,16 +101,12 @@ export class Card {
     const deleteButton = this._element.querySelector('.elements__thrash');
     if (this._isMyCard) {
       deleteButton.dataset.id = this._isMyCard;
-      this._element.querySelector(".elements__thrash").addEventListener("click", handleDeleteCardButton)
+      this._element.querySelector(".elements__thrash").addEventListener("click", () => handleCardDelete(this._id, this._element))
     } else {
       deleteButton.remove();
     };
 
     this._element.querySelector(".elements__photo").addEventListener('click', () => {
-      //popupImagePicture.src = this._link;
-      //popupImageTitle.textContent = this._title;
-      //popupImagePicture.alt = 'Фото ' + this._title;
-      //openPopup(popupImage);
       popupWithImage.open(this._link, this._title);
     });
 
@@ -134,13 +129,12 @@ export class Card {
     })
   }
 
-  //содержит один публичный метод, который возвращает полностью работоспособный и наполненный данными элемент карточки
-  renderCard() {
-    const newCard = this.generate();
-    this._addEventListeners();
+  // //содержит один публичный метод, который возвращает полностью работоспособный и наполненный данными элемент карточки
+  // renderCard() {
+  //   const newCard = this.generate();
 
-    //добавим их в DOM для отладки
-    const elementsContainer = document.querySelector('.elements');
-    elementsContainer.append(newCard);
-  }
+  //   //добавим их в DOM для отладки
+  //   const elementsContainer = document.querySelector('.elements');
+  //   elementsContainer.prepend(newCard);
+  // }
 }

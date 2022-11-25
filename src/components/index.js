@@ -4,6 +4,7 @@ import { Card } from './card.js';
 import { myUrl, myToken, myGroup, validationSettings } from "./consts.js"
 import API from './Api.js';
 import { userInfo } from './UserInfo.js';
+import Section from './section.js'
 
 const profilePopup = document.querySelector('#profile');
 const profilePopupName = profilePopup.querySelector('#profile-name');
@@ -30,14 +31,18 @@ function setInitialCards() {
   api.getInitialCardsFromServer()
     .then((data) => {
 
-      // смотрим структуру ответа для отладки (потом удалить)
-      console.log(data);
+      const reversedData = data.reverse();
 
-      data.forEach((newElement) => {
-        const newCard = new Card({ ...newElement, myId }, '.elements__element');
-        newCard.renderCard();
-      });
+      const sec = new Section({
+        items: reversedData,
+        renderer: (item) => {
+          const newCard = new Card({ ...item, myId }, '.elements__element');
+          const cardEl = newCard.generate()
+          sec.addItem(cardEl)
+        }
+      }, '.elements');
 
+      sec.renderItems()
     })
     .catch((err) => {
       console.log(err);
@@ -89,18 +94,26 @@ function handleNewItemPopupSubmitButton(evt) {
   popupButton.textContent = 'Сохранение...';
   api.addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
     .then((data) => {
-      const cardId = data._id;
-      const elementsContainer = document.querySelector('.elements');
-      const newEl = addNewElement(data.link, data.name, '0', cardId, cardId, 0);
-      elementsContainer.prepend(newEl);
-      closePopup(newItemPopup);
-      evt.target.reset();
+
+      const sec = new Section({
+        items: [data],
+        renderer: (item) => {
+          const newCard = new Card({ ...item, myId }, '.elements__element');
+          const cardEl = newCard.generate()
+          sec.addItem(cardEl)
+        }
+      }, '.elements');
+
+      sec.renderItems()
+
     })
     .catch((err) => {
       console.log(err);
     })
     .finally(() => {
+      evt.target.reset();
       popupButton.textContent = popupButton.dataset.text;
+      closePopup(newItemPopup);
     });
 }
 
