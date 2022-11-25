@@ -11,7 +11,6 @@ const profilePopupAbout = profilePopup.querySelector('#profile-about');
 const newItemPopup = document.querySelector('#newItem');
 const newItemPopupInputAbout = newItemPopup.querySelector('#newItem-about');
 const newItemPopupInputName = newItemPopup.querySelector('#newItem-name');
-const popupImage = document.querySelector('#popupImage');
 const changeAvatarPopup = document.querySelector('#changeAvatar');
 let myId = '';
 
@@ -149,19 +148,18 @@ function setDocumentEventListeners() {
   //нажатие на Создать на форме нового места
   newItemPopup.querySelector('#form-newItem').addEventListener('submit', handleNewItemPopupSubmitButton);
 
-  //нажатие на крестик закрытия на открытой картинке
-  popupImage.querySelector('.popup__close-button').addEventListener('click', function () {
-    closePopup(popupImage);
-  });
+  // //нажатие на крестик закрытия на открытой картинке
+  // popupImage.querySelector('.popup__close-button').addEventListener('click', function () {
+  //   closePopup(popupImage);
+  // });
 
 }
 
 function enableValidation() {
   const formList = Array.from(document.querySelectorAll('.form'));
-  const formValidationList = [];
   formList.forEach((formElement, index) => {
-    formValidationList[index] = new FormValidator(validationSettings, formElement);
-    formValidationList[index].enableValidation();
+    const instance = new FormValidator(validationSettings, formElement);
+    instance.enableValidation();
   });
 
 }
