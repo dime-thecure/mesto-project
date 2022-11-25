@@ -1,7 +1,5 @@
-import { openPopup } from "./modal.js";
 import { api } from './index.js';
 import { popupWithImage } from './index.js';
-
 
 function handleCardDelete(cardId, card) {
   api.deleteCardFromServer(cardId)
@@ -28,37 +26,6 @@ function handleSetLikeButton(evt) {
     });
 }
 
-// //добавление нового элемента по параметрам
-// function addNewElement(elLink, elName, elLikes, elMyCard, elImageId, elMyLike) {
-//   const newEl = tempItem.cloneNode(true);
-//   const newElPhoto = newEl.querySelector('.elements__photo');
-//   const newElLike = newEl.querySelector('.elements__like');
-//   newElPhoto.src = elLink;
-//   newElPhoto.alt = 'Фото ' + elName;
-//   newEl.querySelector('.elements__title').textContent = elName;
-//   newElLike.dataset.count = elLikes;
-//   newElLike.dataset.imageid = elImageId;
-//   newElLike.addEventListener('click', handleSetLikeButton);
-//   const elThrash = newEl.querySelector('.elements__thrash');
-//   if (elMyCard) {
-//     elThrash.dataset.id = elMyCard;
-//     elThrash.addEventListener('click', handleDeleteCardButton);
-//   } else {
-//     elThrash.remove();
-//   }
-//   if (elMyLike) newElLike.classList.toggle('elements__like_active');
-//   newElPhoto.addEventListener('click', (evt) => {
-//     popupImagePicture.src = elLink;
-//     popupImageTitle.textContent = elName;
-//     popupImagePicture.alt = 'Фото ' + elName;
-//     openPopup(popupImage);
-//   });
-//   return newEl;
-// }
-
-// export { addNewElement };
-
-
 // логика Card, реализованная в ООП
 export class Card {
   // принимаем в конструктор данные карточки и селектор её template-элемента
@@ -75,7 +42,6 @@ export class Card {
   // возвращаем DOM-элемент карточки
   _getElement() {
     return document.querySelector('#element').content.querySelector(this._selector).cloneNode(true);
-    // "селектор её template-элемента" - это #element, .elements__element или целая строка нахождения элемента? (решить вопрос)
   }
 
   // заполняем карточку содержимым
@@ -128,13 +94,4 @@ export class Card {
       }
     })
   }
-
-  // //содержит один публичный метод, который возвращает полностью работоспособный и наполненный данными элемент карточки
-  // renderCard() {
-  //   const newCard = this.generate();
-
-  //   //добавим их в DOM для отладки
-  //   const elementsContainer = document.querySelector('.elements');
-  //   elementsContainer.prepend(newCard);
-  // }
 }

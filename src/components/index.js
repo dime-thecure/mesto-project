@@ -1,13 +1,10 @@
 import FormValidator from './FormValidator.js';
-import { openPopup, closePopup } from './modal.js';
 import { Card } from './card.js';
 import { myUrl, myToken, myGroup, validationSettings } from "./consts.js"
 import API from './Api.js';
 import { userInfo } from './UserInfo.js';
-
 import PopupWithImage from './PopupWithImage.js';
 import PopupWithForm from './PopupWithForm.js';
-
 import Section from './section.js'
 
 
@@ -19,11 +16,6 @@ const newItemPopupInputAbout = newItemPopup.querySelector('#newItem-about');
 const newItemPopupInputName = newItemPopup.querySelector('#newItem-name');
 const changeAvatarPopup = document.querySelector('#changeAvatar');
 let myId = '';
-
-export const api = new API(myUrl, myGroup, myToken);
-
-export const popupWithImage = new PopupWithImage('#popupImage');
-popupWithImage.setEventListeners();
 
 function setUserInfo() {
   api.getUserInfoFromServer()
@@ -68,7 +60,6 @@ function handleAvatarPopupSubmitButton(evt) {
   api.changeAvatarToServer(url)
     .then((data) => {
       userInfo.setUserAvatar({ avatar: url });
-      //closePopup(changeAvatarPopup);
       changeAvatarPopupWithForm.close();
       evt.target.reset();
     })
@@ -88,7 +79,6 @@ function handleProfilePopupSubmitButton(evt) {
   api.setUserInfoToServer(profilePopupName.value, profilePopupAbout.value)
     .then((data) => {
       userInfo.setUserInfo(data);
-      //closePopup(profilePopup);
       profilePopupWithForm.close();
     })
     .catch((err) => {
@@ -125,61 +115,30 @@ function handleNewItemPopupSubmitButton(evt) {
     .finally(() => {
       evt.target.reset();
       popupButton.textContent = popupButton.dataset.text;
-      closePopup(newItemPopup);
+      newItemPopupWithForm.close();
     });
 }
 
 //cтавим слушатели на все элементы документа
 function setDocumentEventListeners() {
-  // //нажатие на крестик закрытия на форме профиля
-  // profilePopup.querySelector('.popup__close-button').addEventListener('click', () => {
-  //   closePopup(profilePopup);
-  // });
-
-  //нажатие на крестик закрытия на форме нового места
-  newItemPopup.querySelector('.popup__close-button').addEventListener('click', () => {
-    closePopup(newItemPopup);
-  });
-
-  // //нажатие на крестик закрытия формы редактирования аватара
-  // changeAvatarPopup.querySelector('.popup__close-button').addEventListener('click', () => {
-  //   closePopup(changeAvatarPopup);
-  // });
 
   //нажатие на кнопку редактирования профиля на странице
   document.querySelector('.profile__edit-button').addEventListener('click', () => {
     const { name, about } = userInfo.getUserInfo();
     profilePopupName.value = name;
     profilePopupAbout.value = about;
-    //openPopup(profilePopup);
     profilePopupWithForm.open();
   });
 
-  //нажатие на Сохранить на форме профиля
-  //profilePopup.querySelector('#form-profile').addEventListener('submit', handleProfilePopupSubmitButton);
-
   //нажатие на кнопку добавления нового места на странице
   document.querySelector('.profile__add-button').addEventListener('click', () => {
-    openPopup(newItemPopup);
+    newItemPopupWithForm.open();
   });
 
   //нажатие на кнопку редактирования аватара
   document.querySelector('.profile__image-block').addEventListener('click', () => {
-    //openPopup(changeAvatarPopup);
     changeAvatarPopupWithForm.open();
   });
-
-  // //нажатие на Сохранить на форме редактирования аватара
-  // changeAvatarPopup.querySelector('#form-changeAvatar').addEventListener('submit', handleAvatarPopupSubmitButton);
-
-  //нажатие на Создать на форме нового места
-  newItemPopup.querySelector('#form-newItem').addEventListener('submit', handleNewItemPopupSubmitButton);
-
-  // //нажатие на крестик закрытия на открытой картинке
-  // popupImage.querySelector('.popup__close-button').addEventListener('click', function () {
-  //   closePopup(popupImage);
-  // });
-
 }
 
 function enableValidation() {
@@ -188,13 +147,20 @@ function enableValidation() {
     const instance = new FormValidator(validationSettings, formElement);
     instance.enableValidation();
   });
-
 }
 
-const profilePopupWithForm = new PopupWithForm ({selector: '#profile', handlePopupSubmitButton: handleProfilePopupSubmitButton});
+export const api = new API(myUrl, myGroup, myToken);
+
+export const popupWithImage = new PopupWithImage('#popupImage');
+popupWithImage.setEventListeners();
+
+const newItemPopupWithForm = new PopupWithForm({ selector: '#newItem', handlePopupSubmitButton: handleNewItemPopupSubmitButton });
+newItemPopupWithForm.setEventListeners();
+
+const profilePopupWithForm = new PopupWithForm({ selector: '#profile', handlePopupSubmitButton: handleProfilePopupSubmitButton });
 profilePopupWithForm.setEventListeners();
 
-const changeAvatarPopupWithForm = new PopupWithForm ({selector: '#changeAvatar', handlePopupSubmitButton: handleAvatarPopupSubmitButton});
+const changeAvatarPopupWithForm = new PopupWithForm({ selector: '#changeAvatar', handlePopupSubmitButton: handleAvatarPopupSubmitButton });
 changeAvatarPopupWithForm.setEventListeners();
 
 //Загружаем профиль

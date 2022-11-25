@@ -10,7 +10,3 @@ export const validationSettings = {
   inputErrorClass: 'popup__input_error',
   errorClass: 'popup__input-error_active'
 };
-
-export const popupImage = document.querySelector('#popupImage');
-export const popupImagePicture = popupImage.querySelector('.popup__image');
-export const popupImageTitle = popupImage.querySelector('.popup__title');
