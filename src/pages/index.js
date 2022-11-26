@@ -1,11 +1,11 @@
-import FormValidator from './FormValidator.js';
-import { Card } from './card.js';
-import { myUrl, myToken, myGroup, validationSettings } from "./consts.js"
-import API from './Api.js';
-import { userInfo } from './UserInfo.js';
-import PopupWithImage from './PopupWithImage.js';
-import PopupWithForm from './PopupWithForm.js';
-import Section from './section.js'
+import FormValidator from '../components/FormValidator.js';
+import { Card } from '../components/Сard.js';
+import { myUrl, myToken, myGroup, validationSettings } from "../utils/consts.js"
+import API from '../components/Api.js';
+import UserInfo from '../components/UserInfo.js';
+import PopupWithImage from '../components/PopupWithImage.js';
+import PopupWithForm from '../components/PopupWithForm.js';
+import Section from '../components/Section.js'
 
 
 const profilePopup = document.querySelector('#profile');
@@ -61,7 +61,6 @@ function handleAvatarPopupSubmitButton(evt) {
     .then((data) => {
       userInfo.setUserAvatar({ avatar: url });
       changeAvatarPopupWithForm.close();
-      evt.target.reset();
     })
     .catch((err) => {
       console.log(err);
@@ -113,7 +112,6 @@ function handleNewItemPopupSubmitButton(evt) {
       console.log(err);
     })
     .finally(() => {
-      evt.target.reset();
       popupButton.textContent = popupButton.dataset.text;
       newItemPopupWithForm.close();
     });
@@ -141,13 +139,21 @@ function setDocumentEventListeners() {
   });
 }
 
-function enableValidation() {
-  const formList = Array.from(document.querySelectorAll('.form'));
-  formList.forEach((formElement) => {
-    const instance = new FormValidator(validationSettings, formElement);
-    instance.enableValidation();
+// function enableValidation() {
+//   const formList = Array.from(document.querySelectorAll('.form'));
+//   formList.forEach((formElement) => {
+//     const instance = new FormValidator(validationSettings, formElement);
+//     instance.enableValidation();
+//   });
+// }
+
+
+export const userInfo = new UserInfo(
+  {
+    selectorName: '.profile__title',
+    selectorAbout: '.profile__subtitle',
+    selectorAvatar: '.profile__avatar'
   });
-}
 
 export const api = new API(myUrl, myGroup, myToken);
 
@@ -156,12 +162,18 @@ popupWithImage.setEventListeners();
 
 const newItemPopupWithForm = new PopupWithForm({ selector: '#newItem', handlePopupSubmitButton: handleNewItemPopupSubmitButton });
 newItemPopupWithForm.setEventListeners();
+const newItemPopupWithFormValidation = new FormValidator(validationSettings, '#newItem');
+newItemPopupWithFormValidation.enableValidation();
 
 const profilePopupWithForm = new PopupWithForm({ selector: '#profile', handlePopupSubmitButton: handleProfilePopupSubmitButton });
 profilePopupWithForm.setEventListeners();
+const profilePopupWithFormValidation = new FormValidator(validationSettings, '#profile');
+profilePopupWithFormValidation.enableValidation();
 
 const changeAvatarPopupWithForm = new PopupWithForm({ selector: '#changeAvatar', handlePopupSubmitButton: handleAvatarPopupSubmitButton });
 changeAvatarPopupWithForm.setEventListeners();
+const changeAvatarPopupWithFormValidation = new FormValidator(validationSettings, '#changeAvatar');
+changeAvatarPopupWithFormValidation.enableValidation();
 
 //Загружаем профиль
 setUserInfo();
@@ -169,5 +181,5 @@ setUserInfo();
 setInitialCards();
 //Ставим слушатели на все элементы документа
 setDocumentEventListeners();
-//Запускаем валидацию
-enableValidation();
+// //Запускаем валидацию
+// enableValidation();

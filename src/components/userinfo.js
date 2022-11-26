@@ -1,4 +1,4 @@
-class UserInfo {
+export default class UserInfo {
   _name;
   _about;
   _avatar;
@@ -22,10 +22,3 @@ class UserInfo {
     this._avatar.src = avatar;
   }
 }
-
-export const userInfo = new UserInfo(
-  {
-    selectorName: '.profile__title',
-    selectorAbout: '.profile__subtitle',
-    selectorAvatar: '.profile__avatar'
-  });

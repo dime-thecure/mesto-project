@@ -4,7 +4,7 @@ export default class PopupWithForm extends Popup {
   _instance;
   _handlePopupSubmitButton;
 
-  constructor({selector, handlePopupSubmitButton}) {
+  constructor({ selector, handlePopupSubmitButton }) {
     super(selector);
     this._instance = super._getElement();
     this._handlePopupSubmitButton = handlePopupSubmitButton;
@@ -15,4 +15,8 @@ export default class PopupWithForm extends Popup {
     super.setEventListeners();
   }
 
+  close() {
+    this._instance.querySelector('.form').reset();
+    super.close();
+  }
 }

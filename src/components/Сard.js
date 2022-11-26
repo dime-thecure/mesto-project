@@ -1,5 +1,5 @@
-import { api } from './index.js';
-import { popupWithImage } from './index.js';
+import { api } from '../pages/index.js';
+import { popupWithImage } from '../pages/index.js';
 
 function handleCardDelete(cardId, card) {
   api.deleteCardFromServer(cardId)
