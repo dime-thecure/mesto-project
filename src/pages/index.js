@@ -31,7 +31,7 @@ function setInitialCards(data) {
     items: reversedData,
     renderer: (item) => {
       const newCard = new Card({ ...item, myId }, '#element');
-      const cardEl = newCard.generate()
+      const cardEl = newCard.generate(api.setLikeToServer.bind(api), popupWithImage.open.bind(popupWithImage))
       sec.addItem(cardEl)
     }
   }, '.elements');
@@ -92,7 +92,7 @@ function handleNewItemPopupSubmitButton(evt) {
   api.addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
     .then((data) => {
       const newCard = new Card({ ...data, myId }, '#element');
-      const cardEl = newCard.generate()
+      const cardEl = newCard.generate(api.setLikeToServer.bind(api), popupWithImage.open.bind(popupWithImage))
       sec.addItem(cardEl)
 
     }).then(() => {
@@ -142,7 +142,7 @@ export const userInfo = new UserInfo(
     selectorAvatar: '.profile__avatar'
   });
 
-export const api = new API(myUrl, myGroup, myToken);
+export const api = new API(myUrl + myGroup, { 'authorization': myToken, 'Content-Type': 'application/json' });
 
 export const popupWithImage = new PopupWithImage('#popupImage');
 popupWithImage.setEventListeners();
@@ -162,8 +162,7 @@ changeAvatarPopupWithForm.setEventListeners();
 const changeAvatarPopupWithFormValidation = new FormValidator(validationSettings, '#changeAvatar');
 changeAvatarPopupWithFormValidation.enableValidation();
 
-//Загружаем профиль
-//Создаем начальные карточки
+//Загружаем профиль и создаем начальные карточки
 initPage();
 //Ставим слушатели на все элементы документа
 setDocumentEventListeners();
