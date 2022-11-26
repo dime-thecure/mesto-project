@@ -1,102 +1,125 @@
-export default class API {
-  _baseURL;
-  _group;
-  _token;
-  _userURL;
+const myUrl = 'https://nomoreparties.co/v1/';
+const myToken = '450ae940-2b7e-4477-a632-282343b7d2dc';
+const myGroup = 'plus-cohort-16';
 
-  constructor(baseURL, headers) {
-    this._baseURL = baseURL;
-    this._headers = headers;
+function getResponseData(res) {
+  if (!res.ok) {
+      return Promise.reject('Ошибка: ${res.status}');
   }
-
-  _getResponseData(res) {
-    if (!res.ok) {
-      return Promise.reject(`Ошибка: ${res.status}`);
-    }
-    return res.json();
-  }
-
-  _request(url, options) {
-    return fetch(url, options).then(this._getResponseData)
-  }
-
-  getUserInfoFromServer() {
-    const userUrl = this._baseURL + '/users/me';
-    const options = {
-      method: 'GET',
-      headers: this._headers,
-    }
-    return this._request(userUrl, options)
-  }
-
-  getInitialCardsFromServer() {
-    const url = this._baseURL + '/cards';
-    const options = {
-      method: 'GET',
-      headers: this._headers,
-    }
-    return this._request(url, options)
-  }
-
-  setUserInfoToServer(name, about) {
-    const userUrl = this._baseURL + '/users/me';
-    const options = {
-      method: 'PATCH',
-      headers: this._headers,
-      body: JSON.stringify({
-        name: `${name}`,
-        about: `${about}`
-      })
-    }
-    return this._request(userUrl, options)
-  }
-
-  addNewCardToServer(link, name) {
-    const url = this._baseURL + '/cards';
-    const options = {
-      method: 'POST',
-      headers: this._headers,
-      body: JSON.stringify({
-        name: `${name}`,
-        link: `${link}`
-      })
-    }
-    return this._request(url, options)
-  }
-
-  deleteCardFromServer(cardId) {
-    const url = this._baseURL + '/cards/' + cardId;
-    const options = {
-      method: 'DELETE',
-      headers: this._headers,
-    }
-    return this._request(url, options)
-  }
-
-  changeAvatarToServer(url) {
-    const newUrl = this._baseURL + '/users/me/avatar';
-    const options = {
-      method: 'PATCH',
-      headers: this._headers,
-      body: JSON.stringify({
-        avatar: `${url}`
-      })
-    }
-    return this._request(newUrl, options)
-  }
-
-  setLikeToServer(cardId, hasMyLike) {
-    const url = this._baseURL + '/cards/likes/' + cardId;
-    let methodType = '';
-    if (hasMyLike) {
-      methodType = 'DELETE';
-    } else {
-      methodType = 'PUT';
-    }
-    const options = {
-      method: `${methodType}`,
-      headers: this._headers,
-    }
-    return this._request(url, options)
-  }
+  return res.json();
 }
+
+function getUserInfoFromServer() {
+  const userUrl = myUrl + myGroup + '/users/me';
+  return fetch(userUrl, {
+    method: 'GET',
+    headers: {
+      authorization: `${myToken}`
+    }
+  })
+  .then((res) => {
+    return getResponseData(res);
+  });
+}
+
+function getInitialCardsFromServer() {
+  const userUrl = myUrl + myGroup + '/cards';
+  return fetch(userUrl, {
+    method: 'GET',
+    headers: {
+      authorization: `${myToken}`
+    }
+  })
+  .then((res) => {
+    return getResponseData(res);
+  });
+}
+
+function setUserInfoToServer(name, about) {
+  const userUrl = myUrl + myGroup + '/users/me';
+  return fetch(userUrl, {
+    method: 'PATCH',
+    headers: {
+      authorization: `${myToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: `${name}`,
+      about: `${about}`
+    })
+  })
+  .then((res) => {
+    return getResponseData(res);
+  });
+}
+
+function addNewCardToServer(link, name) {
+  const userUrl = myUrl + myGroup + '/cards';
+  return fetch(userUrl, {
+    method: 'POST',
+    headers: {
+      authorization: `${myToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: `${name}`,
+      link: `${link}`
+    })
+  })
+  .then((res) => {
+    return getResponseData(res);
+  });
+}
+
+function deleteCardFromServer(evt) {
+  const id = evt.target.dataset.id;
+  const userUrl = myUrl + myGroup + '/cards/' + id;
+  return fetch(userUrl, {
+    method: 'DELETE',
+    headers: {
+      authorization: `${myToken}`
+    }
+  })
+  .then((res) => {
+    return getResponseData(res);
+  });
+}
+
+function changeAvatarToServer(url) {
+  const userUrl = myUrl + myGroup + '/users/me/avatar';
+  return fetch(userUrl, {
+    method: 'PATCH',
+    headers: {
+      authorization: `${myToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      avatar: `${url}`
+    })
+  })
+  .then((res) => {
+    return getResponseData(res);
+  });
+}
+
+function setLikeToServer(evt) {
+  const cardId = evt.target.dataset.imageid;
+  const userUrl = myUrl + myGroup + '/cards/likes/' + cardId;
+  let methodType = '';
+  if (evt.target.classList.contains('elements__like_active')) {
+    methodType = 'DELETE';
+  } else {
+    methodType = 'PUT';
+  }
+  return fetch(userUrl, {
+    method: `${methodType}`,
+    headers: {
+      authorization: `${myToken}`
+    }
+  })
+  .then((res) => {
+    return getResponseData(res);
+  });
+}
+
+export { getUserInfoFromServer, getInitialCardsFromServer, setUserInfoToServer, addNewCardToServer, deleteCardFromServer, setLikeToServer, changeAvatarToServer }
