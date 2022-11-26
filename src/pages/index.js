@@ -16,39 +16,37 @@ const newItemPopupInputAbout = newItemPopup.querySelector('#newItem-about');
 const newItemPopupInputName = newItemPopup.querySelector('#newItem-name');
 const changeAvatarPopup = document.querySelector('#changeAvatar');
 let myId = '';
+let sec = '';
 
-function setUserInfo() {
-  api.getUserInfoFromServer()
-    .then((data) => {
-      userInfo.setUserInfo(data);
-      userInfo.setUserAvatar(data);
-      myId = data._id;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+function setUserInfo(data) {
+  userInfo.setUserInfo(data);
+  userInfo.setUserAvatar(data);
+  myId = data._id;
 }
 
-function setInitialCards() {
-  api.getInitialCardsFromServer()
-    .then((data) => {
+function setInitialCards(data) {
+  const reversedData = data.reverse();
 
-      const reversedData = data.reverse();
+  sec = new Section({
+    items: reversedData,
+    renderer: (item) => {
+      const newCard = new Card({ ...item, myId }, '#element');
+      const cardEl = newCard.generate(api.setLikeToServer.bind(api), popupWithImage.open.bind(popupWithImage))
+      sec.addItem(cardEl)
+    }
+  }, '.elements');
 
-      const sec = new Section({
-        items: reversedData,
-        renderer: (item) => {
-          const newCard = new Card({ ...item, myId }, '.elements__element');
-          const cardEl = newCard.generate()
-          sec.addItem(cardEl)
-        }
-      }, '.elements');
+  sec.renderItems()
+}
 
-      sec.renderItems()
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+
+function initPage() {
+  const getCards = api.getInitialCardsFromServer();
+  const getUser = api.getUserInfoFromServer();
+  Promise.all([getCards, getUser]).then(([cards, user]) => {
+    setUserInfo(user)
+    setInitialCards(cards)
+  })
 }
 
 //нажатие на Сохранить на форме аватара
@@ -61,13 +59,12 @@ function handleAvatarPopupSubmitButton(evt) {
     .then((data) => {
       userInfo.setUserAvatar({ avatar: url });
       changeAvatarPopupWithForm.close();
+    }).then(() => {
+      popupButton.textContent = popupButton.dataset.text;
     })
     .catch((err) => {
       console.log(err);
     })
-    .finally(() => {
-      popupButton.textContent = popupButton.dataset.text;
-    });
 }
 
 //нажатие на Сохранить формы профиля
@@ -79,13 +76,12 @@ function handleProfilePopupSubmitButton(evt) {
     .then((data) => {
       userInfo.setUserInfo(data);
       profilePopupWithForm.close();
+    }).then(() => {
+      popupButton.textContent = popupButton.dataset.text;
     })
     .catch((err) => {
       console.log(err);
     })
-    .finally(() => {
-      popupButton.textContent = popupButton.dataset.text;
-    });
 }
 
 //нажатие на Создать на форме нового места
@@ -95,26 +91,17 @@ function handleNewItemPopupSubmitButton(evt) {
   popupButton.textContent = 'Сохранение...';
   api.addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
     .then((data) => {
+      const newCard = new Card({ ...data, myId }, '#element');
+      const cardEl = newCard.generate(api.setLikeToServer.bind(api), popupWithImage.open.bind(popupWithImage))
+      sec.addItem(cardEl)
 
-      const sec = new Section({
-        items: [data],
-        renderer: (item) => {
-          const newCard = new Card({ ...item, myId }, '.elements__element');
-          const cardEl = newCard.generate()
-          sec.addItem(cardEl)
-        }
-      }, '.elements');
-
-      sec.renderItems()
-
+    }).then(() => {
+      popupButton.textContent = popupButton.dataset.text;
+      newItemPopupWithForm.close();
     })
     .catch((err) => {
       console.log(err);
     })
-    .finally(() => {
-      popupButton.textContent = popupButton.dataset.text;
-      newItemPopupWithForm.close();
-    });
 }
 
 //cтавим слушатели на все элементы документа
@@ -155,7 +142,7 @@ export const userInfo = new UserInfo(
     selectorAvatar: '.profile__avatar'
   });
 
-export const api = new API(myUrl, myGroup, myToken);
+export const api = new API(myUrl + myGroup, { 'authorization': myToken, 'Content-Type': 'application/json' });
 
 export const popupWithImage = new PopupWithImage('#popupImage');
 popupWithImage.setEventListeners();
@@ -175,10 +162,8 @@ changeAvatarPopupWithForm.setEventListeners();
 const changeAvatarPopupWithFormValidation = new FormValidator(validationSettings, '#changeAvatar');
 changeAvatarPopupWithFormValidation.enableValidation();
 
-//Загружаем профиль
-setUserInfo();
-//Создаем начальные карточки
-setInitialCards();
+//Загружаем профиль и создаем начальные карточки
+initPage();
 //Ставим слушатели на все элементы документа
 setDocumentEventListeners();
 // //Запускаем валидацию
