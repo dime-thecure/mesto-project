@@ -16,17 +16,6 @@ function setLike(evt, likesCount) {
   evt.target.classList.toggle('elements__like_active');
 }
 
-function handleSetLikeButton(evt) {
-  api.setLikeToServer(evt)
-    .then((data) => {
-      setLike(evt, data.likes.length);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
-// логика Card, реализованная в ООП
 export class Card {
   // принимаем в конструктор данные карточки и селектор её template-элемента
   constructor(data, selector) {
@@ -41,7 +30,7 @@ export class Card {
 
   // возвращаем DOM-элемент карточки
   _getElement() {
-    return document.querySelector('#element').content.querySelector(this._selector).cloneNode(true);
+    return document.querySelector(this._selector).content.querySelector('.elements__element').cloneNode(true);
   }
 
   // заполняем карточку содержимым
@@ -50,7 +39,7 @@ export class Card {
     this._element.querySelector('.elements__title').textContent = this._title;
     this._element.querySelector('.elements__photo').src = this._link;
     this._element.querySelector('.elements__photo').alt = this._title;
-    this._element.querySelector('.elements__like').dataset.count = this._likes; //length?
+    this._element.querySelector('.elements__like').dataset.count = this._likes;
 
     //изначально активируем или не актвируем кнопку лайка
     const like = this._element.querySelector('.elements__like');
