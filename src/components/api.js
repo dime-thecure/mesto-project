@@ -1,11 +1,9 @@
 export default class API {
   _baseURL;
-  _group;
-  _token;
-  _userURL;
+  _headers;
 
-  constructor(baseURL, headers) {
-    this._baseURL = baseURL;
+  constructor({baseUrl, headers}) {
+    this._baseURL = baseUrl;
     this._headers = headers;
   }
 
@@ -17,16 +15,18 @@ export default class API {
   }
 
   _request(url, options) {
-    return fetch(url, options).then(this._getResponseData)
+    return fetch(url, options).then(this._getResponseData);
   }
 
   getUserInfoFromServer() {
     const userUrl = this._baseURL + '/users/me';
-    const options = {
+    return fetch(userUrl, {
       method: 'GET',
-      headers: this._headers,
-    }
-    return this._request(userUrl, options)
+      headers: this._headers
+    })
+      .then((res) => {
+        return this._getResponseData(res);
+      });
   }
 
   getInitialCardsFromServer() {
@@ -40,15 +40,17 @@ export default class API {
 
   setUserInfoToServer(name, about) {
     const userUrl = this._baseURL + '/users/me';
-    const options = {
+    return fetch(userUrl, {
       method: 'PATCH',
       headers: this._headers,
       body: JSON.stringify({
         name: `${name}`,
         about: `${about}`
       })
-    }
-    return this._request(userUrl, options)
+    })
+      .then((res) => {
+        return this._getResponseData(res);
+      });
   }
 
   addNewCardToServer(link, name) {
@@ -74,15 +76,17 @@ export default class API {
   }
 
   changeAvatarToServer(url) {
-    const newUrl = this._baseURL + '/users/me/avatar';
-    const options = {
+    const userUrl = this._baseURL + '/users/me/avatar';
+    return fetch(userUrl, {
       method: 'PATCH',
       headers: this._headers,
       body: JSON.stringify({
         avatar: `${url}`
       })
-    }
-    return this._request(newUrl, options)
+    })
+      .then((res) => {
+        return this._getResponseData(res);
+      });
   }
 
   setLikeToServer(cardId, hasMyLike) {
