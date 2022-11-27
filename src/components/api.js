@@ -104,4 +104,3 @@ export default class API {
     return this._request(url, options)
   }
 }
-

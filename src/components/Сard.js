@@ -58,21 +58,25 @@ export class Card {
     const like = this._element.querySelector('.elements__like');
     like.addEventListener("click", (evt) => {
       if (this._hasMyLike) {
-        handleLike(this._id, this._hasMyLike).then((data) => {
+        handleLike(this._id, this._hasMyLike)
+        .then((data) => {
           evt.target.classList.remove('elements__like_active');
           evt.target.dataset.count = data.likes.length;
           this._hasMyLike = false;
-        }).catch((err) => {
+        })
+        .catch((err) => {
           console.log(err);
         });
       } else {
-        handleLike(this._id, this._hasMyLike).then((data) => {
+        handleLike(this._id, this._hasMyLike)
+        .then((data) => {
           evt.target.classList.add('elements__like_active');
           evt.target.dataset.count = data.likes.length;
           this._hasMyLike = true;
-        }).catch((err) => {
+        })
+        .catch((err) => {
           console.log(err);
-        });;
+        });
       }
     })
   }
