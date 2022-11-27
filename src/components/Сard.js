@@ -18,14 +18,16 @@ export class Card {
   // заполняем карточку содержимым
   generate(handleLike, handleOpen, handleDelete) {
     this._element = this._getElement();
+
     this._element.querySelector('.elements__title').textContent = this._title;
-    this._element.querySelector('.elements__photo').src = this._link;
-    this._element.querySelector('.elements__photo').alt = this._title;
-    this._element.querySelector('.elements__like').dataset.count = this._likes;
+    this._cardImage = this._element.querySelector('.elements__photo');
+    this._cardImage.src = this._link;
+    this._cardImage.alt = this._title;
+    this._cardLike = this._element.querySelector('.elements__like');
+    this._cardLike.dataset.count = this._likes;
 
     //изначально активируем или не актвируем кнопку лайка
-    const like = this._element.querySelector('.elements__like');
-    if (this._hasMyLike) like.classList.add('elements__like_active');
+    if (this._hasMyLike) this._cardLike.classList.add('elements__like_active');
 
     this._addEventListeners(handleLike, handleOpen, handleDelete);
 
@@ -51,12 +53,11 @@ export class Card {
       deleteButton.remove();
     };
 
-    this._element.querySelector(".elements__photo").addEventListener('click', () => {
+    this._cardImage.addEventListener('click', () => {
       handleOpen(this._link, this._title);
     });
 
-    const like = this._element.querySelector('.elements__like');
-    like.addEventListener("click", (evt) => {
+    this._cardLike.addEventListener("click", (evt) => {
       if (this._hasMyLike) {
         handleLike(this._id, this._hasMyLike).then((data) => {
           evt.target.classList.remove('elements__like_active');
