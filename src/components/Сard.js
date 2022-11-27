@@ -18,7 +18,6 @@ export class Card {
   // заполняем карточку содержимым
   generate(handleLike, handleOpen, handleDelete) {
     this._element = this._getElement();
-
     this._element.querySelector('.elements__title').textContent = this._title;
     this._cardImage = this._element.querySelector('.elements__photo');
     this._cardImage.src = this._link;

@@ -80,7 +80,8 @@ function handleNewItemPopupSubmitButton(evt) {
   evt.preventDefault();
   const popupButton = evt.target.querySelector('.popup__button');
   popupButton.textContent = 'Сохранение...';
-  api.addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
+  const { name, about } = newItemPopupWithForm.getInputValues();
+  api.addNewCardToServer(about, name)
     .then((data) => {
       const card = createCard(data)
       sec.addItem(card)
@@ -96,7 +97,6 @@ function handleNewItemPopupSubmitButton(evt) {
 
 //cтавим слушатели на все элементы документа
 function setDocumentEventListeners() {
-
   //нажатие на кнопку редактирования профиля на странице
   document.querySelector('.profile__edit-button').addEventListener('click', () => {
     const { name, about } = userInfo.getUserInfo();
