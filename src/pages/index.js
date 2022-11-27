@@ -17,49 +17,15 @@ const newItemPopupInputName = newItemPopup.querySelector('#newItem-name');
 const changeAvatarPopup = document.querySelector('#changeAvatar');
 let myId = '';
 
-function setUserInfo() {
-  api.getUserInfoFromServer()
-    .then((data) => {
-      userInfo.setUserInfo(data);
-      userInfo.setUserAvatar(data);
-      myId = data._id;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
-function setInitialCards() {
-  api.getInitialCardsFromServer()
-    .then((data) => {
-
-      const reversedData = data.reverse();
-
-      const sec = new Section({
-        items: reversedData,
-        renderer: (item) => {
-          const newCard = new Card({ ...item, myId }, '.elements__element');
-          const cardEl = newCard.generate()
-          sec.addItem(cardEl)
-        }
-      }, '.elements');
-
-      sec.renderItems()
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
 //нажатие на Сохранить на форме аватара
 function handleAvatarPopupSubmitButton(evt) {
   evt.preventDefault();
   const popupButton = evt.target.querySelector('.popup__button');
   popupButton.textContent = 'Сохранение...';
-  const url = changeAvatarPopup.querySelector('#changeAvatar-about').value;
+  const { about: url } = changeAvatarPopupWithForm.getInputValues();
   api.changeAvatarToServer(url)
     .then((data) => {
-      userInfo.setUserAvatar({ avatar: url });
+      userInfo.setUserAvatar(data);
       changeAvatarPopupWithForm.close();
     })
     .catch((err) => {
@@ -75,7 +41,8 @@ function handleProfilePopupSubmitButton(evt) {
   evt.preventDefault();
   const popupButton = evt.target.querySelector('.popup__button');
   popupButton.textContent = 'Сохранение...';
-  api.setUserInfoToServer(profilePopupName.value, profilePopupAbout.value)
+  const { name, about } = profilePopupWithForm.getInputValues();
+  api.setUserInfoToServer(name, about)
     .then((data) => {
       userInfo.setUserInfo(data);
       profilePopupWithForm.close();
@@ -139,15 +106,6 @@ function setDocumentEventListeners() {
   });
 }
 
-// function enableValidation() {
-//   const formList = Array.from(document.querySelectorAll('.form'));
-//   formList.forEach((formElement) => {
-//     const instance = new FormValidator(validationSettings, formElement);
-//     instance.enableValidation();
-//   });
-// }
-
-
 export const userInfo = new UserInfo(
   {
     selectorName: '.profile__title',
@@ -155,7 +113,13 @@ export const userInfo = new UserInfo(
     selectorAvatar: '.profile__avatar'
   });
 
-export const api = new API(myUrl, myGroup, myToken);
+export const api = new API({
+  baseUrl: myUrl + myGroup,
+  headers: {
+    authorization: myToken,
+    'Content-Type': 'application/json'
+  }
+});
 
 export const popupWithImage = new PopupWithImage('#popupImage');
 popupWithImage.setEventListeners();
@@ -175,11 +139,28 @@ changeAvatarPopupWithForm.setEventListeners();
 const changeAvatarPopupWithFormValidation = new FormValidator(validationSettings, '#changeAvatar');
 changeAvatarPopupWithFormValidation.enableValidation();
 
-//Загружаем профиль
-setUserInfo();
-//Создаем начальные карточки
-setInitialCards();
+//Загружаем профиль и создаем начальные карточки
+Promise.all([api.getUserInfoFromServer(), api.getInitialCardsFromServer()])
+  .then(([userData, cardsData]) => {
+    //Профиль
+    userInfo.setUserInfo(userData);
+    userInfo.setUserAvatar(userData);
+    myId = userData._id;
+    //Карточки
+    const reversedData = cardsData.reverse();
+    const sec = new Section({
+      items: reversedData,
+      renderer: (item) => {
+        const newCard = new Card({ ...item, myId }, '.elements__element');
+        const cardEl = newCard.generate()
+        sec.addItem(cardEl)
+      }
+    }, '.elements');
+    sec.renderItems()
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 //Ставим слушатели на все элементы документа
 setDocumentEventListeners();
-// //Запускаем валидацию
-// enableValidation();

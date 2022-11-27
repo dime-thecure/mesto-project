@@ -5,6 +5,8 @@ export default class Popup {
   constructor(popupSelector) {
     this._popupInstance = document.querySelector(popupSelector);
     this._closeButton = this._popupInstance.querySelector('.popup__close-button');
+    this._handleEscClose = this._handleEscClose.bind(this);
+    this._handleOverlay = this._handleOverlay.bind(this);
   }
 
   //нажатие на крестик закрытия на открытой картинке
@@ -35,14 +37,14 @@ export default class Popup {
   //открытие попап, установка слушателя на Esc и клик
   open() {
     this._popupInstance.classList.add('popup_opened');
-    document.addEventListener('keydown', this._handleEscClose.bind(this));
-    this._popupInstance.addEventListener('mousedown', this._handleOverlay.bind(this));
+    document.addEventListener('keydown', this._handleEscClose);
+    this._popupInstance.addEventListener('mousedown', this._handleOverlay);
   }
 
   //закрытие попап, удаление слушателя на Esc и клик
   close() {
     this._popupInstance.classList.remove('popup_opened');
-    document.removeEventListener('keydown', this._handleEscClose.bind(this));
-    this._popupInstance.removeEventListener('mousedown', this._handleOverlay.bind(this));
+    document.removeEventListener('keydown', this._handleEscClose);
+    this._popupInstance.removeEventListener('mousedown', this._handleOverlay);
   }
 }
