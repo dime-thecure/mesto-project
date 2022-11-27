@@ -2,7 +2,7 @@ export default class API {
   _baseURL;
   _headers;
 
-  constructor({baseUrl, headers}) {
+  constructor({ baseUrl, headers }) {
     this._baseURL = baseUrl;
     this._headers = headers;
   }
@@ -104,3 +104,4 @@ export default class API {
     return this._request(url, options)
   }
 }
+

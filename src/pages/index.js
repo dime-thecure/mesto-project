@@ -25,7 +25,7 @@ function setInitialCards(data) {
     items: reversedData,
     renderer: (item) => {
       const newCard = new Card({ ...item, myId }, '#element');
-      const cardEl = newCard.generate(api.setLikeToServer.bind(api), popupWithImage.open.bind(popupWithImage))
+      const cardEl = newCard.generate(api.setLikeToServer.bind(api), popupWithImage.open.bind(popupWithImage), api.deleteCardFromServer.bind(api))
       sec.addItem(cardEl)
     }
   }, '.elements');
@@ -77,7 +77,7 @@ function handleNewItemPopupSubmitButton(evt) {
   api.addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
     .then((data) => {
       const newCard = new Card({ ...data, myId }, '#element');
-      const cardEl = newCard.generate(api.setLikeToServer.bind(api), popupWithImage.open.bind(popupWithImage))
+      const cardEl = newCard.generate(api.setLikeToServer.bind(api), popupWithImage.open.bind(popupWithImage), api.deleteCardFromServer.bind(api))
       sec.addItem(cardEl)
 
     }).then(() => {
