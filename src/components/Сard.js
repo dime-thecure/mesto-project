@@ -1,20 +1,3 @@
-import { api } from '../pages/index.js';
-
-function handleCardDelete(cardId, card) {
-  api.deleteCardFromServer(cardId)
-    .then((data) => {
-      card.remove();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
-function setLike(evt, likesCount) {
-  evt.target.dataset.count = likesCount;
-  evt.target.classList.toggle('elements__like_active');
-}
-
 export class Card {
   // принимаем в конструктор данные карточки и селектор её template-элемента
   constructor(data, selector) {
@@ -33,7 +16,7 @@ export class Card {
   }
 
   // заполняем карточку содержимым
-  generate(handleLike, handleOpen) {
+  generate(handleLike, handleOpen, handleDelete) {
     this._element = this._getElement();
     this._element.querySelector('.elements__title').textContent = this._title;
     this._element.querySelector('.elements__photo').src = this._link;
@@ -44,18 +27,26 @@ export class Card {
     const like = this._element.querySelector('.elements__like');
     if (this._hasMyLike) like.classList.add('elements__like_active');
 
-    this._addEventListeners(handleLike, handleOpen);
+    this._addEventListeners(handleLike, handleOpen, handleDelete);
 
     // возвращаем элемент в качестве результата работы метода
     return this._element;
   }
 
   //учтанавливаем слушатели событий;
-  _addEventListeners(handleLike, handleOpen) {
+  _addEventListeners(handleLike, handleOpen, handleDelete) {
     const deleteButton = this._element.querySelector('.elements__thrash');
     if (this._isMyCard) {
       deleteButton.dataset.id = this._isMyCard;
-      this._element.querySelector(".elements__thrash").addEventListener("click", () => handleCardDelete(this._id, this._element))
+      this._element.querySelector(".elements__thrash").addEventListener("click", () => {
+        handleDelete(this._id)
+          .then(() => {
+            this._element.remove();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
     } else {
       deleteButton.remove();
     };
@@ -71,13 +62,17 @@ export class Card {
           evt.target.classList.remove('elements__like_active');
           evt.target.dataset.count = data.likes.length;
           this._hasMyLike = false;
+        }).catch((err) => {
+          console.log(err);
         });
       } else {
         handleLike(this._id, this._hasMyLike).then((data) => {
           evt.target.classList.add('elements__like_active');
           evt.target.dataset.count = data.likes.length;
           this._hasMyLike = true;
-        });
+        }).catch((err) => {
+          console.log(err);
+        });;
       }
     })
   }
