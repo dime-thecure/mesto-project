@@ -33,16 +33,6 @@ function setInitialCards(data) {
   sec.renderItems()
 }
 
-
-// function initPage() {
-//   const getCards = api.getInitialCardsFromServer();
-//   const getUser = api.getUserInfoFromServer();
-//   Promise.all([getCards, getUser]).then(([cards, user]) => {
-//     setUserInfo(user)
-//     setInitialCards(cards)
-//   })
-// }
-
 //нажатие на Сохранить на форме аватара
 function handleAvatarPopupSubmitButton(evt) {
   evt.preventDefault();
@@ -163,16 +153,6 @@ Promise.all([api.getUserInfoFromServer(), api.getInitialCardsFromServer()])
     myId = userData._id;
     //Карточки
     setInitialCards(cardsData);
-    // const reversedData = cardsData.reverse();
-    // const sec = new Section({
-    //   items: reversedData,
-    //   renderer: (item) => {
-    //     const newCard = new Card({ ...item, myId }, '.elements__element');
-    //     const cardEl = newCard.generate()
-    //     sec.addItem(cardEl)
-    //   }
-    // }, '.elements');
-    // sec.renderItems()
   })
   .catch((err) => {
     console.log(err);
