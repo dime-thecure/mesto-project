@@ -18,15 +18,21 @@ const changeAvatarPopup = document.querySelector('#changeAvatar');
 let myId = '';
 let sec = '';
 
+function createCard(item) {
+  const newCard = new Card({ ...item, myId }, '#element');
+  const cardEl = newCard.generate(api.setLikeToServer.bind(api), popupWithImage.open.bind(popupWithImage), api.deleteCardFromServer.bind(api))
+  return cardEl
+}
+
+
 function setInitialCards(data) {
   const reversedData = data.reverse();
 
   sec = new Section({
     items: reversedData,
     renderer: (item) => {
-      const newCard = new Card({ ...item, myId }, '#element');
-      const cardEl = newCard.generate(api.setLikeToServer.bind(api), popupWithImage.open.bind(popupWithImage), api.deleteCardFromServer.bind(api))
-      sec.addItem(cardEl)
+      const card = createCard(item)
+      sec.addItem(card)
     }
   }, '.elements');
 
@@ -76,9 +82,8 @@ function handleNewItemPopupSubmitButton(evt) {
   popupButton.textContent = 'Сохранение...';
   api.addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
     .then((data) => {
-      const newCard = new Card({ ...data, myId }, '#element');
-      const cardEl = newCard.generate(api.setLikeToServer.bind(api), popupWithImage.open.bind(popupWithImage), api.deleteCardFromServer.bind(api))
-      sec.addItem(cardEl)
+      const card = createCard(data)
+      sec.addItem(card)
 
     }).then(() => {
       popupButton.textContent = popupButton.dataset.text;
