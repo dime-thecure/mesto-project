@@ -14,6 +14,10 @@ export default class API {
     return res.json();
   }
 
+  _request(url, options) {
+    return fetch(url, options).then(this._getResponseData);
+  }
+
   getUserInfoFromServer() {
     const userUrl = this._baseURL + '/users/me';
     return fetch(userUrl, {
@@ -26,14 +30,12 @@ export default class API {
   }
 
   getInitialCardsFromServer() {
-    const userUrl = this._baseURL + '/cards';
-    return fetch(userUrl, {
+    const url = this._baseURL + '/cards';
+    const options = {
       method: 'GET',
-      headers: this._headers
-    })
-      .then((res) => {
-        return this._getResponseData(res);
-      });
+      headers: this._headers,
+    }
+    return this._request(url, options)
   }
 
   setUserInfoToServer(name, about) {
@@ -52,29 +54,25 @@ export default class API {
   }
 
   addNewCardToServer(link, name) {
-    const userUrl = this._baseURL + '/cards';
-    return fetch(userUrl, {
+    const url = this._baseURL + '/cards';
+    const options = {
       method: 'POST',
       headers: this._headers,
       body: JSON.stringify({
         name: `${name}`,
         link: `${link}`
       })
-    })
-      .then((res) => {
-        return this._getResponseData(res);
-      });
+    }
+    return this._request(url, options)
   }
 
   deleteCardFromServer(cardId) {
-    const userUrl = this._baseURL + '/cards/' + cardId;
-    return fetch(userUrl, {
+    const url = this._baseURL + '/cards/' + cardId;
+    const options = {
       method: 'DELETE',
-      headers: this._headers
-    })
-      .then((res) => {
-        return this._getResponseData(res);
-      });
+      headers: this._headers,
+    }
+    return this._request(url, options)
   }
 
   changeAvatarToServer(url) {
@@ -92,19 +90,17 @@ export default class API {
   }
 
   setLikeToServer(cardId, hasMyLike) {
-    const userUrl = this._baseURL + '/cards/likes/' + cardId;
+    const url = this._baseURL + '/cards/likes/' + cardId;
     let methodType = '';
     if (hasMyLike) {
       methodType = 'DELETE';
     } else {
       methodType = 'PUT';
     }
-    return fetch(userUrl, {
+    const options = {
       method: `${methodType}`,
-      headers: this._headers
-    })
-      .then((res) => {
-        return this._getResponseData(res);
-      });
+      headers: this._headers,
+    }
+    return this._request(url, options)
   }
 }

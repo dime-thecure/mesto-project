@@ -1,5 +1,4 @@
 import { api } from '../pages/index.js';
-import { popupWithImage } from '../pages/index.js';
 
 function handleCardDelete(cardId, card) {
   api.deleteCardFromServer(cardId)
@@ -16,17 +15,6 @@ function setLike(evt, likesCount) {
   evt.target.classList.toggle('elements__like_active');
 }
 
-function handleSetLikeButton(evt) {
-  api.setLikeToServer(evt)
-    .then((data) => {
-      setLike(evt, data.likes.length);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
-// логика Card, реализованная в ООП
 export class Card {
   // принимаем в конструктор данные карточки и селектор её template-элемента
   constructor(data, selector) {
@@ -41,29 +29,29 @@ export class Card {
 
   // возвращаем DOM-элемент карточки
   _getElement() {
-    return document.querySelector('#element').content.querySelector(this._selector).cloneNode(true);
+    return document.querySelector(this._selector).content.querySelector('.elements__element').cloneNode(true);
   }
 
   // заполняем карточку содержимым
-  generate() {
+  generate(handleLike, handleOpen) {
     this._element = this._getElement();
     this._element.querySelector('.elements__title').textContent = this._title;
     this._element.querySelector('.elements__photo').src = this._link;
     this._element.querySelector('.elements__photo').alt = this._title;
-    this._element.querySelector('.elements__like').dataset.count = this._likes; //length?
+    this._element.querySelector('.elements__like').dataset.count = this._likes;
 
     //изначально активируем или не актвируем кнопку лайка
     const like = this._element.querySelector('.elements__like');
     if (this._hasMyLike) like.classList.add('elements__like_active');
 
-    this._addEventListeners();
+    this._addEventListeners(handleLike, handleOpen);
 
     // возвращаем элемент в качестве результата работы метода
     return this._element;
   }
 
   //учтанавливаем слушатели событий;
-  _addEventListeners() {
+  _addEventListeners(handleLike, handleOpen) {
     const deleteButton = this._element.querySelector('.elements__thrash');
     if (this._isMyCard) {
       deleteButton.dataset.id = this._isMyCard;
@@ -73,20 +61,19 @@ export class Card {
     };
 
     this._element.querySelector(".elements__photo").addEventListener('click', () => {
-      popupWithImage.open(this._link, this._title);
+      handleOpen(this._link, this._title);
     });
 
     const like = this._element.querySelector('.elements__like');
     like.addEventListener("click", (evt) => {
       if (this._hasMyLike) {
-        api.setLikeToServer(this._id, this._hasMyLike).then((data) => {
+        handleLike(this._id, this._hasMyLike).then((data) => {
           evt.target.classList.remove('elements__like_active');
           evt.target.dataset.count = data.likes.length;
           this._hasMyLike = false;
         });
-
       } else {
-        api.setLikeToServer(this._id, this._hasMyLike).then((data) => {
+        handleLike(this._id, this._hasMyLike).then((data) => {
           evt.target.classList.add('elements__like_active');
           evt.target.dataset.count = data.likes.length;
           this._hasMyLike = true;

@@ -16,6 +16,32 @@ const newItemPopupInputAbout = newItemPopup.querySelector('#newItem-about');
 const newItemPopupInputName = newItemPopup.querySelector('#newItem-name');
 const changeAvatarPopup = document.querySelector('#changeAvatar');
 let myId = '';
+let sec = '';
+
+function setInitialCards(data) {
+  const reversedData = data.reverse();
+
+  sec = new Section({
+    items: reversedData,
+    renderer: (item) => {
+      const newCard = new Card({ ...item, myId }, '#element');
+      const cardEl = newCard.generate(api.setLikeToServer.bind(api), popupWithImage.open.bind(popupWithImage))
+      sec.addItem(cardEl)
+    }
+  }, '.elements');
+
+  sec.renderItems()
+}
+
+
+function initPage() {
+  const getCards = api.getInitialCardsFromServer();
+  const getUser = api.getUserInfoFromServer();
+  Promise.all([getCards, getUser]).then(([cards, user]) => {
+    setUserInfo(user)
+    setInitialCards(cards)
+  })
+}
 
 //нажатие на Сохранить на форме аватара
 function handleAvatarPopupSubmitButton(evt) {
@@ -27,13 +53,12 @@ function handleAvatarPopupSubmitButton(evt) {
     .then((data) => {
       userInfo.setUserAvatar(data);
       changeAvatarPopupWithForm.close();
+    }).then(() => {
+      popupButton.textContent = popupButton.dataset.text;
     })
     .catch((err) => {
       console.log(err);
     })
-    .finally(() => {
-      popupButton.textContent = popupButton.dataset.text;
-    });
 }
 
 //нажатие на Сохранить формы профиля
@@ -46,13 +71,12 @@ function handleProfilePopupSubmitButton(evt) {
     .then((data) => {
       userInfo.setUserInfo(data);
       profilePopupWithForm.close();
+    }).then(() => {
+      popupButton.textContent = popupButton.dataset.text;
     })
     .catch((err) => {
       console.log(err);
     })
-    .finally(() => {
-      popupButton.textContent = popupButton.dataset.text;
-    });
 }
 
 //нажатие на Создать на форме нового места
@@ -62,26 +86,17 @@ function handleNewItemPopupSubmitButton(evt) {
   popupButton.textContent = 'Сохранение...';
   api.addNewCardToServer(newItemPopupInputAbout.value, newItemPopupInputName.value)
     .then((data) => {
+      const newCard = new Card({ ...data, myId }, '#element');
+      const cardEl = newCard.generate(api.setLikeToServer.bind(api), popupWithImage.open.bind(popupWithImage))
+      sec.addItem(cardEl)
 
-      const sec = new Section({
-        items: [data],
-        renderer: (item) => {
-          const newCard = new Card({ ...item, myId }, '.elements__element');
-          const cardEl = newCard.generate()
-          sec.addItem(cardEl)
-        }
-      }, '.elements');
-
-      sec.renderItems()
-
+    }).then(() => {
+      popupButton.textContent = popupButton.dataset.text;
+      newItemPopupWithForm.close();
     })
     .catch((err) => {
       console.log(err);
     })
-    .finally(() => {
-      popupButton.textContent = popupButton.dataset.text;
-      newItemPopupWithForm.close();
-    });
 }
 
 //cтавим слушатели на все элементы документа
