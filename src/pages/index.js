@@ -83,11 +83,11 @@ function handleNewItemPopupSubmitButton(evt) {
     .then((data) => {
       const card = createCard(data)
       sec.addItem(card)
+      newItemPopupWithForm.close();
     }).catch((err) => {
       console.log(err);
     }).finally(() => {
       popupButton.textContent = popupButton.dataset.text;
-      newItemPopupWithForm.close();
     })
 }
 
