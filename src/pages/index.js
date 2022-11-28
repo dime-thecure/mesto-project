@@ -49,11 +49,10 @@ function handleAvatarPopupSubmitButton(evt) {
     .then((data) => {
       userInfo.setUserAvatar(data);
       changeAvatarPopupWithForm.close();
-    }).then(() => {
-      popupButton.textContent = popupButton.dataset.text;
-    })
-    .catch((err) => {
+    }).catch((err) => {
       console.log(err);
+    }).finally(() => {
+      popupButton.textContent = popupButton.dataset.text;
     })
 }
 
@@ -67,11 +66,10 @@ function handleProfilePopupSubmitButton(evt) {
     .then((data) => {
       userInfo.setUserInfo(data);
       profilePopupWithForm.close();
-    }).then(() => {
-      popupButton.textContent = popupButton.dataset.text;
-    })
-    .catch((err) => {
+    }).catch((err) => {
       console.log(err);
+    }).finally(() => {
+      popupButton.textContent = popupButton.dataset.text;
     })
 }
 
@@ -85,13 +83,11 @@ function handleNewItemPopupSubmitButton(evt) {
     .then((data) => {
       const card = createCard(data)
       sec.addItem(card)
-
-    }).then(() => {
+    }).catch((err) => {
+      console.log(err);
+    }).finally(() => {
       popupButton.textContent = popupButton.dataset.text;
       newItemPopupWithForm.close();
-    })
-    .catch((err) => {
-      console.log(err);
     })
 }
 
