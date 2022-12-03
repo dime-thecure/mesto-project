@@ -1,5 +1,5 @@
 import FormValidator from '../components/FormValidator.js';
-import { Card } from '../components/Сard.js';
+import { Card } from '../components/Card.js';
 import { myUrl, myToken, myGroup, validationSettings } from "../utils/consts.js"
 import API from '../components/Api.js';
 import UserInfo from '../components/UserInfo.js';
